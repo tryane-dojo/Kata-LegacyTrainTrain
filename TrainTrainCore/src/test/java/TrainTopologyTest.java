@@ -1,14 +1,15 @@
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.traintrain.Seat;
-import com.traintrain.SeatJson;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.traintrain.Seat;
+import com.traintrain.SeatJson;
 
 
 public class TrainTopologyTest {
@@ -41,8 +42,8 @@ public class TrainTopologyTest {
     private void AssertSeats(List<Seat> seats) {
         String seatA1 = seats.get(0).toString();
         String seatA2 = seats.get(1).toString();
-        Assert.assertEquals(2, seats.size());
-        Assert.assertEquals("A1", seatA1);
-        Assert.assertEquals("A2", seatA2);
+        Assertions.assertEquals(2, seats.size());
+        Assertions.assertEquals("A1", seatA1);
+        Assertions.assertEquals("A2", seatA2);
     }
 }

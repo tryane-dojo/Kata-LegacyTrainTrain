@@ -55,7 +55,7 @@ public class WebTicketManagerShould {
 			}
 
 			@Override
-			protected String getBookRef(Client client) {
+			protected String getBookReference() {
 				return "75bcd15";
 			}
 

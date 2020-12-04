@@ -56,12 +56,8 @@ public class WebTicketManager {
             List<Seat> availableSeatsToBook = train.findAvailableSeatsToBook(nbSeatsToBook);
 
             if (availableSeatsToBook.size() == nbSeatsToBook) {
-                Client client = ClientBuilder.newClient();
-                try {
-                    bookingRef = this.getBookRef(client);
-                } finally {
-                    client.close();
-                }
+                bookingRef = getBookReference();
+                
                 for (Seat availableSeat : availableSeatsToBook) {
                     availableSeat.setBookingRef(bookingRef);
                 }
@@ -87,6 +83,19 @@ public class WebTicketManager {
         }
         return String.format("{{\"train_id\": \"%s\", \"booking_reference\": \"\", \"seats\": []}}", trainId);
     }
+
+    protected String getBookReference() {
+		String bookingRef;
+		Client client = ClientBuilder.newClient();
+		try {
+			
+			WebTarget target = client.target(uriBookingReferenceService + "/booking_reference/");
+			bookingRef = target.request(MediaType.APPLICATION_JSON).get(String.class);
+		} finally {
+		    client.close();
+		}
+		return bookingRef;
+	}
 
 	protected void sendReserveToTrainService(String trainId, List<Seat> availableSeats, String bookingRef) {
         String postContent = buildPostContent(trainId, bookingRef, availableSeats);
@@ -138,17 +147,8 @@ public class WebTicketManager {
             client.close();
         }
         return new Train(JsonTrainTopology);
-    }
-
-    protected String getBookRef(Client client) {
-        String booking_ref;
-
-        WebTarget target = client.target(uriBookingReferenceService + "/booking_reference/");
-        booking_ref = target.request(MediaType.APPLICATION_JSON).get(String.class);
-
-        return booking_ref;
-    }
-
+    }  
+    
     private List<SeatEntity> toSeatsEntities(String train, List<Seat> availableSeats, String bookingRef) throws InterruptedException {
         List<SeatEntity> seatEntities = new ArrayList<SeatEntity>();
         for (Seat seat : availableSeats) {

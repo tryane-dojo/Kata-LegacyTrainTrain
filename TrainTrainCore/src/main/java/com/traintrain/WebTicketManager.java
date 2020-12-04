@@ -49,14 +49,13 @@ public class WebTicketManager {
         String bookingRef;
 
         // get the train
-        String JsonTrain = this.getTrain(trainId);
-        Train train = new Train(JsonTrain);
+        Train train = this.getTrain(trainId);
 
         if (this.canWeBookSeats(nbSeatsToBook, train)) {
 
             // find seat without booking ref
-            for (int index = 0, i = 0; index < train.Seats.size(); index++) {
-                Seat seat = train.Seats.get(index);
+            for (int index = 0, i = 0; index < train.seats.size(); index++) {
+                Seat seat = train.seats.get(index);
                 if (seat.isNotBooked()) {
                     i++;
                     if (i <= nbSeatsToBook) {
@@ -75,7 +74,7 @@ public class WebTicketManager {
                 for (Seat availableSeat : availableSeatsToBook) {
                     availableSeat.setBookingRef(bookingRef);
                 }
-                
+
                 this.trainCaching.Save(this.toSeatsEntities(trainId, availableSeatsToBook, bookingRef));
 
                 if (availableSeatsToBook.size() == 0) {
@@ -98,18 +97,18 @@ public class WebTicketManager {
         return String.format("{{\"train_id\": \"%s\", \"booking_reference\": \"\", \"seats\": []}}", trainId);
     }
 
-	protected void sendReserveToTrainService(String trainId, List<Seat> availableSeats, String bookingRef) {
-		String postContent = buildPostContent(trainId, bookingRef, availableSeats);
+    protected void sendReserveToTrainService(String trainId, List<Seat> availableSeats, String bookingRef) {
+        String postContent = buildPostContent(trainId, bookingRef, availableSeats);
 
-		Client client = ClientBuilder.newClient();
-		try {
-		    WebTarget webTarget = client.target(urITrainDataService + "/reserve/");
-		    Invocation.Builder request = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
-		    request.post(Entity.text(postContent));
-		} finally {
-		    client.close();
-		}
-	}
+        Client client = ClientBuilder.newClient();
+        try {
+            WebTarget webTarget = client.target(urITrainDataService + "/reserve/");
+            Invocation.Builder request = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
+            request.post(Entity.text(postContent));
+        } finally {
+            client.close();
+        }
+    }
 
     private boolean canWeBookSeats(int nbSeatsToBook, Train train) {
         return (train.ReservedSeats + nbSeatsToBook) <= Math.floor(ThresholdManager.getMaxRes() * train.getMaxSeat());
@@ -135,7 +134,7 @@ public class WebTicketManager {
         return sb.toString();
     }
 
-    protected String getTrain(String train) {
+    protected Train getTrain(String train) throws IOException {
         String JsonTrainTopology;
         Client client = ClientBuilder.newClient();
         try {
@@ -147,7 +146,7 @@ public class WebTicketManager {
         } finally {
             client.close();
         }
-        return JsonTrainTopology;
+        return new Train(JsonTrainTopology);
     }
 
     protected String getBookRef(Client client) {

@@ -45,8 +45,7 @@ public class WebTicketManager {
     }
 
     public String reserve(String trainId, int nbSeatsToBook) throws IOException, InterruptedException {
-        List<Seat> availableSeats = new ArrayList<>();
-        int nbAvailableSeats = 0;
+        List<Seat> availableSeatsToBook = new ArrayList<>();
         String bookingRef;
 
         // get the train
@@ -54,58 +53,45 @@ public class WebTicketManager {
         Train train = new Train(JsonTrain);
 
         if (this.canWeBookSeats(nbSeatsToBook, train)) {
-            int numberOfReserv = 0;
 
             // find seat without booking ref
             for (int index = 0, i = 0; index < train.Seats.size(); index++) {
                 Seat seat = train.Seats.get(index);
-                if (seat.getBookingRef() == "") {
+                if (seat.isNotBooked()) {
                     i++;
                     if (i <= nbSeatsToBook) {
-                        availableSeats.add(seat);
+                        availableSeatsToBook.add(seat);
                     }
                 }
             }
 
-            for (Seat seat : availableSeats) {
-                nbAvailableSeats++;
-            }
-
-            int reservedSeats = 0;
-
-
-            if (nbAvailableSeats != nbSeatsToBook) {
-                return String.format("{{\"train_id\": \"%s\", \"booking_reference\": \"\", \"seats\": []}}",
-                        trainId);
-            } else {
+            if (availableSeatsToBook.size() == nbSeatsToBook) {
                 Client client = ClientBuilder.newClient();
                 try {
                     bookingRef = this.getBookRef(client);
                 } finally {
                     client.close();
                 }
-                for (Seat availableSeat : availableSeats) {
+                for (Seat availableSeat : availableSeatsToBook) {
                     availableSeat.setBookingRef(bookingRef);
-                    numberOfReserv++;
-                    reservedSeats++;
                 }
-            }
+                
+                this.trainCaching.Save(this.toSeatsEntities(trainId, availableSeatsToBook, bookingRef));
 
-            if (numberOfReserv == nbSeatsToBook) {
-
-                this.trainCaching.Save(this.toSeatsEntities(trainId, availableSeats, bookingRef));
-
-                if (reservedSeats == 0) {
-                    String output = String.format("Reserved seat(s): ", reservedSeats);
+                if (availableSeatsToBook.size() == 0) {
+                    String output = String.format("Reserved seat(s): ", availableSeatsToBook.size());
                     System.out.println(output);
                 }
 
-                sendReserveToTrainService(trainId, availableSeats, bookingRef);
+                sendReserveToTrainService(trainId, availableSeatsToBook, bookingRef);
                 return String.format(
                         "{{\"train_id\": \"%s\", \"booking_reference\": \"%s\", \"seats\": %s}}",
                         trainId,
                         bookingRef,
-                        this.dumpSeats(availableSeats));
+                        this.dumpSeats(availableSeatsToBook));
+            } else {
+                return String.format("{{\"train_id\": \"%s\", \"booking_reference\": \"\", \"seats\": []}}",
+                        trainId);
             }
 
         }

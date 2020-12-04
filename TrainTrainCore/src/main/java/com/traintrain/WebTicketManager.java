@@ -50,7 +50,7 @@ public class WebTicketManager {
         // get the train
         Train train = this.getTrain(trainId);
 
-        if (this.canWeBookSeats(nbSeatsToBook, train)) {
+        if (train.canWeBookSeats(nbSeatsToBook, ThresholdManager.getMaxRes())) {
 
             // find seat without booking ref
             List<Seat> availableSeatsToBook = train.findAvailableSeatsToBook(nbSeatsToBook);
@@ -108,10 +108,6 @@ public class WebTicketManager {
         } finally {
             client.close();
         }
-    }
-
-    private boolean canWeBookSeats(int nbSeatsToBook, Train train) {
-        return (train.getReservedSeatCount() + nbSeatsToBook) <= Math.floor(ThresholdManager.getMaxRes() * train.getMaxSeat());
     }
 
     private String dumpSeats(List<Seat> seats) {

@@ -63,5 +63,9 @@ public class Train {
 		return availableSeatsToBook;
 	}
 
+    boolean canWeBookSeats(int nbSeatsToBook, double trainThreadshold) {
+        return (getReservedSeatCount() + nbSeatsToBook) <= Math.floor(trainThreadshold * getMaxSeat());
+    }
+
     
 }

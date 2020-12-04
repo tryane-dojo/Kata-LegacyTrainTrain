@@ -100,18 +100,7 @@ public class WebTicketManager {
                     System.out.println(output);
                 }
 
-                String todod = "[TODOD]";
-
-                String postContent = buildPostContent(trainId, bookingRef, availableSeats);
-
-                Client client = ClientBuilder.newClient();
-                try {
-                    WebTarget webTarget = client.target(urITrainDataService + "/reserve/");
-                    Invocation.Builder request = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
-                    request.post(Entity.text(postContent));
-                } finally {
-                    client.close();
-                }
+                sendReserveToTrainService(trainId, availableSeats, bookingRef);
                 return String.format(
                         "{{\"train_id\": \"%s\", \"booking_reference\": \"%s\", \"seats\": %s}}",
                         trainId,
@@ -122,6 +111,19 @@ public class WebTicketManager {
         }
         return String.format("{{\"train_id\": \"%s\", \"booking_reference\": \"\", \"seats\": []}}", trainId);
     }
+
+	private void sendReserveToTrainService(String trainId, List<Seat> availableSeats, String bookingRef) {
+		String postContent = buildPostContent(trainId, bookingRef, availableSeats);
+
+		Client client = ClientBuilder.newClient();
+		try {
+		    WebTarget webTarget = client.target(urITrainDataService + "/reserve/");
+		    Invocation.Builder request = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
+		    request.post(Entity.text(postContent));
+		} finally {
+		    client.close();
+		}
+	}
 
     private boolean canWeBookSeats(int nbSeatsToBook, Train train) {
         return (train.ReservedSeats + nbSeatsToBook) <= Math.floor(ThresholdManager.getMaxRes() * train.getMaxSeat());

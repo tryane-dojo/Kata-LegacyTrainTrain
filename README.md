@@ -50,11 +50,11 @@ A few months ago, a v1 of the TrainTrain.Api has been developed and released by 
 1. Quick look to understand the code architecture and find the domain code
 2. Use basic refactor pattern and our IDE to clarify a little the code base and start to isolate dependencies 
 3. Write your first test on the shortest path
-4. See if you can start to refactor the legacy code
-5. Continue to write test to deeper path and continue to refactor
+4. See if you can start to extract some dependencies
+5. Continue to write test to deeper path until you can test the 2 business rules
 6. Find why we paying recurrent penalties
 7. Once all domain code is tested and refactored, start to emerge the hexagonal architecture
-8. Implements the new business rules
+8. Implements the new business rule
 ## Platform architecture
 
 ### TrainTrain & Hassan Cehef Web Apis interactions

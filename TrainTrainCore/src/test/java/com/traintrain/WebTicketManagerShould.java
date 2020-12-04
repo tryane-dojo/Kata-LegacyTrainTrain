@@ -2,7 +2,6 @@ package com.traintrain;
 
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.client.Client;
 import java.io.IOException;
 import java.util.List;
 
@@ -76,11 +75,12 @@ public class WebTicketManagerShould {
     }
 
     @Test
+
     public void reserved_two_seats_in_the_same_coach() throws InterruptedException, IOException {
         WebTicketManager webTicketManager = new WebTicketManager() {
 
             @Override
-            protected Train getTrain(String train) throws IOException {
+            protected Train getTrain(String train) {
 
                 return new TrainBuilder()
                         .addSeat(1, "A", "AAA")

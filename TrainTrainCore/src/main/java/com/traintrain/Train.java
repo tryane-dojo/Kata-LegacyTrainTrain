@@ -4,12 +4,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Train {
     public List<Seat> seats;
+    private List<Coach> coachs = new ArrayList<>();
 
     public Train(String trainTopol) throws IOException {
 
@@ -36,36 +36,31 @@ public class Train {
     }
 
     public Train(List<Seat> seats) {
-    	this();
-    	this.seats = seats;
-	}
+        this();
+        this.seats = seats;
+        seats.stream().collect(Collectors.groupingBy(Seat::getCoachName)).forEach((coachName, seatList) -> coachs.add(new Coach(seatList)));
+    }
 
     public int getReservedSeatCount() {
-    	return (int) seats.stream().filter(Seat::isBooked).count();
+        return (int) seats.stream().filter(Seat::isBooked).count();
     }
-    
-	public int getMaxSeat() {
+
+    public int getMaxSeat() {
         return this.seats.size();
     }
 
-	List<Seat> findAvailableSeatsToBook(int nbSeatsToBook) {
-		List<Seat> availableSeatsToBook = new ArrayList<>();
-	
-		for (int index = 0, i = 0; index < seats.size(); index++) {
-		    Seat seat = seats.get(index);
-		    if (seat.isNotBooked()) {
-		        i++;
-		        if (i <= nbSeatsToBook) {
-		            availableSeatsToBook.add(seat);
-		        }
-		    }
-		}
-		return availableSeatsToBook;
-	}
+    List<Seat> findAvailableSeatsToBook(int nbSeatsToBook) {
+        Optional<Coach> coach = coachs.stream().filter(c -> c.findAvailableSeatsToBook(nbSeatsToBook).size() == nbSeatsToBook).findFirst();
+        if (coach.isPresent()) {
+            return coach.get().findAvailableSeatsToBook(nbSeatsToBook);
+        } else {
+            return Collections.emptyList();
+        }
+    }
 
     boolean canWeBookSeats(int nbSeatsToBook, double trainThreadshold) {
         return (getReservedSeatCount() + nbSeatsToBook) <= Math.floor(trainThreadshold * getMaxSeat());
     }
 
-    
+
 }

@@ -26,9 +26,7 @@ public class Train {
             for (SeatJson seatJson : value.values()) {
                 int seat_number = Integer.parseInt(seatJson.seat_number);
                 seats.add(new Seat(seatJson.coach, seat_number, seatJson.booking_reference));
-                if (!(new Seat(seatJson.coach, seat_number, seatJson.booking_reference).getBookingRef() == "")) {
-//                    this.reservedSeats++;
-                }
+
             }
         }
     }
@@ -49,6 +47,21 @@ public class Train {
 	public int getMaxSeat() {
         return this.seats.size();
     }
+
+	List<Seat> findAvailableSeatsToBook(int nbSeatsToBook) {
+		List<Seat> availableSeatsToBook = new ArrayList<>();
+	
+		for (int index = 0, i = 0; index < seats.size(); index++) {
+		    Seat seat = seats.get(index);
+		    if (seat.isNotBooked()) {
+		        i++;
+		        if (i <= nbSeatsToBook) {
+		            availableSeatsToBook.add(seat);
+		        }
+		    }
+		}
+		return availableSeatsToBook;
+	}
 
     
 }

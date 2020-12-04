@@ -45,7 +45,6 @@ public class WebTicketManager {
     }
 
     public String reserve(String trainId, int nbSeatsToBook) throws IOException, InterruptedException {
-        List<Seat> availableSeatsToBook = new ArrayList<>();
         String bookingRef;
 
         // get the train
@@ -54,15 +53,7 @@ public class WebTicketManager {
         if (this.canWeBookSeats(nbSeatsToBook, train)) {
 
             // find seat without booking ref
-            for (int index = 0, i = 0; index < train.seats.size(); index++) {
-                Seat seat = train.seats.get(index);
-                if (seat.isNotBooked()) {
-                    i++;
-                    if (i <= nbSeatsToBook) {
-                        availableSeatsToBook.add(seat);
-                    }
-                }
-            }
+            List<Seat> availableSeatsToBook = train.findAvailableSeatsToBook(nbSeatsToBook);
 
             if (availableSeatsToBook.size() == nbSeatsToBook) {
                 Client client = ClientBuilder.newClient();
@@ -97,7 +88,7 @@ public class WebTicketManager {
         return String.format("{{\"train_id\": \"%s\", \"booking_reference\": \"\", \"seats\": []}}", trainId);
     }
 
-    protected void sendReserveToTrainService(String trainId, List<Seat> availableSeats, String bookingRef) {
+	protected void sendReserveToTrainService(String trainId, List<Seat> availableSeats, String bookingRef) {
         String postContent = buildPostContent(trainId, bookingRef, availableSeats);
 
         Client client = ClientBuilder.newClient();

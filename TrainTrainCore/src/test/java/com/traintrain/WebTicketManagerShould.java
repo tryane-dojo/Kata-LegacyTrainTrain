@@ -24,8 +24,6 @@ public class WebTicketManagerShould {
 				String bookingReference = "A2AUEJ5EE";
 				return  new TrainBuilder().addSeat(1, "A", bookingReference).addSeat(2, "A", EMPTY_BOOKING_REFERENCE).build();
 
-//				return new Train(
-	//					"{\"seats\": {\"1A\": {\"booking_reference\": \"reserved\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"}}}");
 			}
 
 		};
@@ -45,13 +43,15 @@ public class WebTicketManagerShould {
 
 			@Override
 			protected Train getTrain(String train) throws IOException {
-				return new Train("{\"seats\": " + "{"
-						+ "\"1A\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"A\"}, "
-						+ "\"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"},"
-						+ "\"3A\": {\"booking_reference\": \"\", \"seat_number\": \"3\", \"coach\": \"A\"},"
-						+ "\"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"},"
-						+ "\"5A\": {\"booking_reference\": \"\", \"seat_number\": \"5\", \"coach\": \"A\"}" + EMPTY_BOOKING_REFERENCE
-						+ "}}");
+				
+				return  new TrainBuilder()
+						.addSeat(1, "A", EMPTY_BOOKING_REFERENCE)
+						.addSeat(2, "A", EMPTY_BOOKING_REFERENCE)
+						.addSeat(3, "A", EMPTY_BOOKING_REFERENCE)
+						.addSeat(4, "A", EMPTY_BOOKING_REFERENCE)
+						.addSeat(5, "A", EMPTY_BOOKING_REFERENCE)
+						.build();
+	
 			}
 
 			@Override

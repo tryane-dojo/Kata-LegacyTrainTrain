@@ -112,7 +112,7 @@ public class WebTicketManager {
         return String.format("{{\"train_id\": \"%s\", \"booking_reference\": \"\", \"seats\": []}}", trainId);
     }
 
-	private void sendReserveToTrainService(String trainId, List<Seat> availableSeats, String bookingRef) {
+	protected void sendReserveToTrainService(String trainId, List<Seat> availableSeats, String bookingRef) {
 		String postContent = buildPostContent(trainId, bookingRef, availableSeats);
 
 		Client client = ClientBuilder.newClient();

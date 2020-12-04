@@ -2,6 +2,8 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/TrainTrainApi" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TrainTrainApi/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/TrainTrainDal" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TrainTrainDal/src/main/java" charset="UTF-8" />
   </component>
 </project>

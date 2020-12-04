@@ -10,66 +10,69 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class WebTicketManagerShould {
 
-    @Test
-    public void
-    return_empty_seat_list_if_rervation_capacity_is_over_threshold() throws InterruptedException, IOException {
+	private static final String EMPTY_BOOKING_REFERENCE = "";
 
-        WebTicketManager webTicketManager = new WebTicketManager() {
+	@Test
+	public void return_empty_seat_list_if_rervation_capacity_is_over_threshold()
+			throws InterruptedException, IOException {
 
-            @Override
-            protected Train getTrain(String train) throws IOException {
-                return new Train("{\"seats\": {\"1A\": {\"booking_reference\": \"reserved\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"}}}");
-            }
+		WebTicketManager webTicketManager = new WebTicketManager() {
 
-        };
+			@Override
+			protected Train getTrain(String train) throws IOException {
 
-        String trainId = "train_id";
-        int nbSeatsToBook = 1;
+				String bookingReference = "A2AUEJ5EE";
+				return  new TrainBuilder().addSeat(1, "A", bookingReference).addSeat(2, "A", EMPTY_BOOKING_REFERENCE).build();
 
-        String reservation = webTicketManager.reserve(trainId, nbSeatsToBook);
+//				return new Train(
+	//					"{\"seats\": {\"1A\": {\"booking_reference\": \"reserved\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"}}}");
+			}
 
-        assertThat(reservation).isEqualTo("{{\"train_id\": \"train_id\", \"booking_reference\": \"\", \"seats\": []}}");
-    }
+		};
 
-    @Test
-    public void
-    reservation_successfull_if_train_is_empty() throws InterruptedException, IOException {
+		String trainId = "train_id";
+		int nbSeatsToBook = 1;
 
-        WebTicketManager webTicketManager = new WebTicketManager() {
+		String reservation = webTicketManager.reserve(trainId, nbSeatsToBook);
 
-            @Override
-            protected Train getTrain(String train) throws IOException {
-                return new Train("{\"seats\": "
-                        + "{"
-                        + "\"1A\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"A\"}, "
-                        + "\"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"},"
-                        + "\"3A\": {\"booking_reference\": \"\", \"seat_number\": \"3\", \"coach\": \"A\"},"
-                        + "\"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"},"
-                        + "\"5A\": {\"booking_reference\": \"\", \"seat_number\": \"5\", \"coach\": \"A\"}"
-                        + ""
-                        + "}}");
-            }
+		assertThat(reservation).isEqualTo("{{\"train_id\": \"train_id\", \"booking_reference\": \"\", \"seats\": []}}");
+	}
 
-            @Override
-            protected String getBookRef(Client client) {
-                return "75bcd15";
-            }
+	@Test
+	public void reservation_successfull_if_train_is_empty() throws InterruptedException, IOException {
 
-            @Override
-            protected void sendReserveToTrainService(String trainId, List<Seat> availableSeats, String bookingRef) {
+		WebTicketManager webTicketManager = new WebTicketManager() {
 
+			@Override
+			protected Train getTrain(String train) throws IOException {
+				return new Train("{\"seats\": " + "{"
+						+ "\"1A\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"A\"}, "
+						+ "\"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"},"
+						+ "\"3A\": {\"booking_reference\": \"\", \"seat_number\": \"3\", \"coach\": \"A\"},"
+						+ "\"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"},"
+						+ "\"5A\": {\"booking_reference\": \"\", \"seat_number\": \"5\", \"coach\": \"A\"}" + EMPTY_BOOKING_REFERENCE
+						+ "}}");
+			}
 
-            }
+			@Override
+			protected String getBookRef(Client client) {
+				return "75bcd15";
+			}
 
-        };
+			@Override
+			protected void sendReserveToTrainService(String trainId, List<Seat> availableSeats, String bookingRef) {
 
-        String trainId = "train_id";
-        int nbSeatsToBook = 1;
+			}
 
-        String reservation = webTicketManager.reserve(trainId, nbSeatsToBook);
+		};
 
-        assertThat(reservation).isEqualTo("{{\"train_id\": \"train_id\", \"booking_reference\": \"75bcd15\", \"seats\": [\"1A\"]}}");
-    }
+		String trainId = "train_id";
+		int nbSeatsToBook = 1;
 
+		String reservation = webTicketManager.reserve(trainId, nbSeatsToBook);
+
+		assertThat(reservation)
+				.isEqualTo("{{\"train_id\": \"train_id\", \"booking_reference\": \"75bcd15\", \"seats\": [\"1A\"]}}");
+	}
 
 }

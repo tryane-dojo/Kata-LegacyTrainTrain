@@ -111,7 +111,7 @@ public class WebTicketManager {
     }
 
     private boolean canWeBookSeats(int nbSeatsToBook, Train train) {
-        return (train.ReservedSeats + nbSeatsToBook) <= Math.floor(ThresholdManager.getMaxRes() * train.getMaxSeat());
+        return (train.getReservedSeatCount() + nbSeatsToBook) <= Math.floor(ThresholdManager.getMaxRes() * train.getMaxSeat());
     }
 
     private String dumpSeats(List<Seat> seats) {

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Train {
-    public int ReservedSeats;
     public List<Seat> seats;
 
     public Train(String trainTopol) throws IOException {
@@ -28,7 +27,7 @@ public class Train {
                 int seat_number = Integer.parseInt(seatJson.seat_number);
                 seats.add(new Seat(seatJson.coach, seat_number, seatJson.booking_reference));
                 if (!(new Seat(seatJson.coach, seat_number, seatJson.booking_reference).getBookingRef() == "")) {
-                    this.ReservedSeats++;
+//                    this.reservedSeats++;
                 }
             }
         }
@@ -38,11 +37,18 @@ public class Train {
         seats = new ArrayList<>();
     }
 
-    public int getMaxSeat() {
+    public Train(List<Seat> seats) {
+    	this();
+    	this.seats = seats;
+	}
+
+    public int getReservedSeatCount() {
+    	return (int) seats.stream().filter(Seat::isBooked).count();
+    }
+    
+	public int getMaxSeat() {
         return this.seats.size();
     }
 
-    public boolean hasLessThanThreshold(int i) {
-        return ReservedSeats < i;
-    }
+    
 }

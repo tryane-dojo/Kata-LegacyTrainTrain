@@ -45,6 +45,10 @@ public class Seat {
     }
     
     public Boolean isNotBooked() {
-        return this.getBookingRef() == "";
+        return isBooked() == false;
+    }
+    
+    public Boolean isBooked() {
+        return this.getBookingRef() != "";
     }
 }

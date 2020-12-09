@@ -10,8 +10,8 @@ import com.cache.SeatEntity;
 import com.cache.TrainCaching;
 
 public class WebTicketManager {
-    private static final String uriBookingReferenceService = "http://localhost:51691";
-    private static final String urITrainDataService = "http://localhost:50680";
+    private static final String uriBookingReferenceService = "http://localhost:8082";
+    private static final String urITrainDataService = "http://localhost:8081";
     private ITrainCaching trainCaching;
 
     public WebTicketManager() throws InterruptedException {

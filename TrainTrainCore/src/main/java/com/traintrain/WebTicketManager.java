@@ -1,10 +1,17 @@
 package com.traintrain;
 
-import javax.ws.rs.client.*;
-import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MediaType;
+
 import com.cache.ITrainCaching;
 import com.cache.SeatEntity;
 import com.cache.TrainCaching;
@@ -22,37 +29,26 @@ public class WebTicketManager {
 
     public Reservation reserve(String train, int seats) throws IOException, InterruptedException {
         List<Seat> availableSeats = new ArrayList<Seat>();
-        int count = 0;
-        String result = "";
         String bookingRef;
 
         // get the train
         String JsonTrain = getTrain(train);
-
-        result = JsonTrain;
-
         Train trainInst = new Train(JsonTrain);
-        if ((trainInst.ReservedSeats + seats) <= Math.floor(ThresholdManager.getMaxRes() * trainInst.getMaxSeat())) {
+        if ((trainInst.reservedSeats + seats) <= Math.floor(ThresholdManager.getMaxRes() * trainInst.getMaxSeat())) {
             int numberOfReserv = 0;
             // find seats to reserve
-            for (int index = 0, i = 0; index < trainInst.Seats.size(); index++) {
-                Seat each = trainInst.Seats.get(index);
-                if (each.getBookingRef() == "") {
-                    i++;
-                    if (i <= seats) {
-                        availableSeats.add(each);
+            for (Seat seat : trainInst.seats) {
+                if (seat.getBookingRef() == "") {
+                    if (numberOfReserv < seats) {
+                        numberOfReserv++;
+                        availableSeats.add(seat);
                     }
                 }
             }
-
-            for (Seat seat : availableSeats) {
-                count++;
-            }
-
-            int reservedSets = 0;
-
-
-            if (count == seats) {
+            
+            if (numberOfReserv != seats) {
+                return new Reservation(train);
+            } else {
                 Client client = ClientBuilder.newClient();
                 try {
                     bookingRef = getBookRef(client);
@@ -62,19 +58,15 @@ public class WebTicketManager {
                 }
                 for (Seat availableSeat : availableSeats) {
                     availableSeat.setBookingRef(bookingRef);
-                    numberOfReserv++;
-                    reservedSets++;
                 }
-            } else {
-                return new Reservation(train);
             }
 
             if (numberOfReserv == seats) {
 
                 this.trainCaching.Save(toSeatsEntities(train, availableSeats, bookingRef));
 
-                if (reservedSets == 0) {
-                    String output = String.format("Reserved seat(s): ", reservedSets);
+                if (numberOfReserv == 0) {
+                    String output = String.format("Reserved seat(s): ", numberOfReserv);
                     System.out.println(output);
                 }
 
@@ -86,9 +78,23 @@ public class WebTicketManager {
                 try {
                     WebTarget webTarget = client.target(urITrainDataService + "/reserve/");
                     Invocation.Builder request = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
+                    
+                    Form form = new Form();
+                    form.param("train_id", postReservation.getTrain_id());
+                    
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("[");
+                    for (String seat : postReservation.getSeats()) {
+                        builder.append("\"").append(seat).append("\"");
+                    }
+                    builder.append("]");
+                    
+                    form.param("seats", builder.toString());
+                    form.param("booking_reference", postReservation.getBooking_reference());
+                                        
                     String string = new ObjectMapper().writeValueAsString(postReservation);
                     System.out.println(string);
-                    request.post(Entity.text(string));
+                    request.post(Entity.entity(form,MediaType.APPLICATION_FORM_URLENCODED_TYPE));
                 }
                 finally {
                     client.close();

@@ -8,6 +8,7 @@ import java.util.List;
 import com.cache.ITrainCaching;
 import com.cache.SeatEntity;
 import com.cache.TrainCaching;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class WebTicketManager {
     private static final String uriBookingReferenceService = "http://localhost:8082";
@@ -19,7 +20,7 @@ public class WebTicketManager {
         trainCaching.Clear();
     }
 
-    public String reserve(String train, int seats) throws IOException, InterruptedException {
+    public Reservation reserve(String train, int seats) throws IOException, InterruptedException {
         List<Seat> availableSeats = new ArrayList<Seat>();
         int count = 0;
         String result = "";
@@ -51,10 +52,7 @@ public class WebTicketManager {
             int reservedSets = 0;
 
 
-            if (count != seats) {
-                return String.format("{{\"train_id\": \"%s\", \"booking_reference\": \"\", \"seats\": []}}",
-                        train);
-            } else {
+            if (count == seats) {
                 Client client = ClientBuilder.newClient();
                 try {
                     bookingRef = getBookRef(client);
@@ -67,6 +65,8 @@ public class WebTicketManager {
                     numberOfReserv++;
                     reservedSets++;
                 }
+            } else {
+                return new Reservation(train);
             }
 
             if (numberOfReserv == seats) {
@@ -80,70 +80,24 @@ public class WebTicketManager {
 
                 String todod = "[TODOD]";
 
-                String postContent = buildPostContent(train, bookingRef, availableSeats);
+                Reservation postReservation = new Reservation(train, bookingRef, availableSeats);
 
                 Client client = ClientBuilder.newClient();
                 try {
                     WebTarget webTarget = client.target(urITrainDataService + "/reserve/");
                     Invocation.Builder request = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
-                    request.post(Entity.text(postContent));
+                    String string = new ObjectMapper().writeValueAsString(postReservation);
+                    System.out.println(string);
+                    request.post(Entity.text(string));
                 }
                 finally {
                     client.close();
                 }
-                return String.format(
-                        "{{\"train_id\": \"%s\", \"booking_reference\": \"%s\", \"seats\": %s}}",
-                        train,
-                        bookingRef,
-                        dumpSeats(availableSeats));
+                return new Reservation(train, bookingRef, availableSeats);
             }
 
         }
-        return String.format("{{\"train_id\": \"%s\", \"booking_reference\": \"\", \"seats\": []}}", train);
-    }
-
-    private static String buildPostContent(String trainId, String booking_ref, List<Seat> availableSeats) {
-        StringBuilder seats = new StringBuilder("[");
-
-        boolean firstTime = true;
-
-        for (Seat seat : availableSeats) {
-            if (!firstTime) {
-                seats.append(", ");
-            } else {
-                firstTime = false;
-            }
-
-            seats.append(String.format("\"%d%s\"", seat.getSeatNumber(), seat.getCoachName()));
-        }
-
-        seats.append("]");
-
-        String result = String.format(
-                "{{\r\n\t\"train_id\": \"%s\",\r\n\t\"seats\": %s,\r\n\t\"booking_reference\": \"%S\"\r\n}}",
-                trainId, seats.toString(), booking_ref);
-
-        return result;
-    }
-
-    private String dumpSeats(List<Seat> seats) {
-        StringBuilder sb = new StringBuilder("[");
-
-        boolean firstTime = true;
-
-        for (Seat seat : seats) {
-            if (!firstTime) {
-                sb.append(", ");
-            } else {
-                firstTime = false;
-            }
-
-            sb.append(String.format("\"%d%s\"", seat.getSeatNumber(), seat.getCoachName()));
-        }
-
-        sb.append("]");
-
-        return sb.toString();
+        return new Reservation(train);
     }
 
     protected String getTrain(String train) {
@@ -151,7 +105,7 @@ public class WebTicketManager {
         Client client = ClientBuilder.newClient();
         try {
 
-            WebTarget target = client.target(urITrainDataService + "/api/data_for_train/");
+            WebTarget target = client.target(urITrainDataService + "/data_for_train/");
             WebTarget path = target.path(String.valueOf(train));
             Invocation.Builder request = path.request(MediaType.APPLICATION_JSON);
             JsonTrainTopology = request.get(String.class);

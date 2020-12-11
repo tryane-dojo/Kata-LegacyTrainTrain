@@ -15,13 +15,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class TrainDataService implements ITrainDataService {
 
+    static final String urITrainDataService = "http://localhost:8081";
+
     @Override
     public void applyReservation(String trainId, List<Seat> availableSeats, String bookingRef)
             throws JsonProcessingException {
 
         Client client = ClientBuilder.newClient();
         try {
-            WebTarget webTarget = client.target(WebTicketManager.urITrainDataService + "/reserve/");
+            WebTarget webTarget = client.target(TrainDataService.urITrainDataService + "/reserve/");
             Invocation.Builder request = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
 
             Form form = new Form();
@@ -49,7 +51,7 @@ public class TrainDataService implements ITrainDataService {
         Client client = ClientBuilder.newClient();
         try {
 
-            WebTarget target = client.target(WebTicketManager.urITrainDataService + "/data_for_train/");
+            WebTarget target = client.target(TrainDataService.urITrainDataService + "/data_for_train/");
             WebTarget path = target.path(String.valueOf(trainId));
             Invocation.Builder request = path.request(MediaType.APPLICATION_JSON);
             JsonTrainTopology = request.get(String.class);

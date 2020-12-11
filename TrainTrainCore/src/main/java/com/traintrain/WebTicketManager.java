@@ -4,7 +4,6 @@ import java.io.IOException;
 
 public class WebTicketManager {
 
-    static final String              urITrainDataService = "http://localhost:8081";
     private IBookingReferenceService bookingReferenceService;
     private ITrainDataService        trainDataService    = new TrainDataService();
 

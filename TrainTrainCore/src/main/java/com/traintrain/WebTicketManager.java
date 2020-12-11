@@ -33,7 +33,7 @@ public class WebTicketManager {
 
         // get the train
         TrainTopology train = dataTrainService.getTrainTopology(trainId);
-        if ((train.getReservedSeats() + nbSeatRequested) <= Math.floor(ThresholdManager.getMaxRes() * train.getMaxSeat())) {
+        if (train.doNotExceedTrainCapacity(nbSeatRequested)) {
             int numberOfReserv = 0;
             List<Seat> availableSeats = new ArrayList<Seat>();
             // find seats to reserve
@@ -66,7 +66,6 @@ public class WebTicketManager {
         return new Reservation(trainId);
     }
 
-    
     private List<SeatEntity> toSeatsEntities(String train, List<Seat> availableSeats, String bookingRef) throws InterruptedException {
         List<SeatEntity> seatEntities = new ArrayList<SeatEntity>();
         for (Seat seat : availableSeats) {

@@ -52,4 +52,8 @@ public class TrainTopology {
     public boolean hasLessThanThreshold(int i) {
         return reservedSeats < i;
     }
+
+    boolean doNotExceedTrainCapacity(int nbSeatRequested) {
+        return (getReservedSeats() + nbSeatRequested) <= Math.floor(ThresholdManager.getMaxRes() * getMaxSeat());
+    }
 }

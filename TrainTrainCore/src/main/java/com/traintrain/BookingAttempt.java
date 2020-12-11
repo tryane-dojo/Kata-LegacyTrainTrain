@@ -7,7 +7,7 @@ public class BookingAttempt {
     private String     trainId;
     private List<Seat> seats;
     private int        nbSeatRequested;
-    private String     bookingRef;
+    private String     reference;
 
     public BookingAttempt(String trainId, int nbSeatRequested, List<Seat> seats) {
         this.trainId = trainId;
@@ -24,18 +24,17 @@ public class BookingAttempt {
     }
 
     boolean isFullfiled() {
-        return getSeats().size() == nbSeatRequested;
+        return seats.size() == nbSeatRequested;
     }
 
-    void assignReference(String bookingRef) {
-        this.bookingRef = bookingRef;
-        for (Seat seat : seats) {
-            seat.setBookingRef(bookingRef);
-        }
+    void assignReference(String reference) {
+        this.reference = reference;
     }
 
     public String getReference() {
-        return bookingRef;
+        return reference;
+    }
+
     BookingConfirmation confirm() {
         return new BookingConfirmation(trainId, reference, seats);
     }

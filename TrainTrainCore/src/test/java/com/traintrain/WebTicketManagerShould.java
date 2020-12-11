@@ -1,18 +1,15 @@
 package com.traintrain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -23,14 +20,14 @@ import org.mockito.quality.Strictness;
 public class WebTicketManagerShould {
 
     private static final String TRAIN_ID = "express_2000";
-    
+
     WebTicketManager            webTicketManager;
-    
+
     @Mock
-    IBookingReferenceService bookingReferenceService;
-    
+    IBookingReferenceService    bookingReferenceService;
+
     @Mock
-    ITrainDataService dataTrainService;
+    ITrainDataService           dataTrainService;
 
     @BeforeEach
     public void beforeEach() throws InterruptedException, IOException {
@@ -38,15 +35,16 @@ public class WebTicketManagerShould {
     }
 
     @SuppressWarnings("unchecked")
-	@Test
+    @Test
     void reserve_seats_requested_when_train_is_empty() throws IOException, InterruptedException {
         //given
-        TrainTopology trainTopology = new TrainTopology("{\"seats\": {\"1A\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"}, \"3A\": {\"booking_reference\": \"\", \"seat_number\": \"3\", \"coach\": \"A\"}, \"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"}}}");
+        TrainTopology trainTopology = TrainTopology
+                .fromJson("{\"seats\": {\"1A\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"}, \"3A\": {\"booking_reference\": \"\", \"seat_number\": \"3\", \"coach\": \"A\"}, \"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"}}}");
         when(dataTrainService.getTrainTopology(TRAIN_ID)).thenReturn(trainTopology);
         int nbSeatRequested = 1;
-        String bookingRef ="2dadaz4";
-        
-		when(bookingReferenceService.getBookingReference()).thenReturn(bookingRef);
+        String bookingRef = "2dadaz4";
+
+        when(bookingReferenceService.getBookingReference()).thenReturn(bookingRef);
 
         // when
         Reservation reservation = webTicketManager.reserve(TRAIN_ID, nbSeatRequested);
@@ -60,13 +58,14 @@ public class WebTicketManagerShould {
         assertThat(seatsCaptor.getValue()).containsExactly(new Seat("A", 1, bookingRef));
 
     }
-    
+
     @Test
     public void not_reserve_if_train_is_over_threshold() throws IOException, InterruptedException {
         // given
-        TrainTopology trainTopology = new TrainTopology("{\"seats\": {\"1A\": {\"booking_reference\": \"aaa\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"bbbbb\", \"seat_number\": \"2\", \"coach\": \"A\"}, \"3A\": {\"booking_reference\": \"cccccc\", \"seat_number\": \"3\", \"coach\": \"A\"}, \"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"}}}");
+        TrainTopology trainTopology = TrainTopology
+                .fromJson("{\"seats\": {\"1A\": {\"booking_reference\": \"aaa\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"bbbbb\", \"seat_number\": \"2\", \"coach\": \"A\"}, \"3A\": {\"booking_reference\": \"cccccc\", \"seat_number\": \"3\", \"coach\": \"A\"}, \"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"}}}");
         when(dataTrainService.getTrainTopology(TRAIN_ID)).thenReturn(trainTopology);
-        
+
         // when
         Reservation reservation = webTicketManager.reserve(TRAIN_ID, 1);
 
@@ -74,25 +73,16 @@ public class WebTicketManagerShould {
         Assertions.assertThat(reservation.getBooking_reference()).isNull();
         Assertions.assertThat(reservation.getSeats()).isEmpty();
     }
-    
+
     @Test
     public void reserve_all_seats_in_same_coach() throws IOException, InterruptedException {
-    	// given
-        TrainTopology trainTopology = new TrainTopology("{\"seats\": {"
-        		+ "\"1A\": {\"booking_reference\": \"a\", \"seat_number\": \"1\", \"coach\": \"A\"}, "
-        		+ "\"2A\": {\"booking_reference\": \"a\", \"seat_number\": \"2\", \"coach\": \"A\"}, "
-        		+ "\"3A\": {\"booking_reference\": \"a\", \"seat_number\": \"3\", \"coach\": \"A\"}, "
-        		+ "\"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"}, "
-        		+ "\"1B\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"B\"}, "
-        		+ "\"2B\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"B\"}, "
-        		+ "\"3B\": {\"booking_reference\": \"\", \"seat_number\": \"3\", \"coach\": \"B\"}, "
-        		+ "\"4B\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"B\"}, "
-        		+ "\"5B\": {\"booking_reference\": \"\", \"seat_number\": \"5\", \"coach\": \"B\"} "
-        		+ "}}");
-        String bookingRef ="2dadaz4";
-		when(bookingReferenceService.getBookingReference()).thenReturn(bookingRef);
+        // given
+        TrainTopology trainTopology = TrainTopology
+                .fromJson("{\"seats\": {" + "\"1A\": {\"booking_reference\": \"a\", \"seat_number\": \"1\", \"coach\": \"A\"}, " + "\"2A\": {\"booking_reference\": \"a\", \"seat_number\": \"2\", \"coach\": \"A\"}, " + "\"3A\": {\"booking_reference\": \"a\", \"seat_number\": \"3\", \"coach\": \"A\"}, " + "\"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"}, " + "\"1B\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"B\"}, " + "\"2B\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"B\"}, " + "\"3B\": {\"booking_reference\": \"\", \"seat_number\": \"3\", \"coach\": \"B\"}, " + "\"4B\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"B\"}, " + "\"5B\": {\"booking_reference\": \"\", \"seat_number\": \"5\", \"coach\": \"B\"} " + "}}");
+        String bookingRef = "2dadaz4";
+        when(bookingReferenceService.getBookingReference()).thenReturn(bookingRef);
         when(dataTrainService.getTrainTopology(TRAIN_ID)).thenReturn(trainTopology);
-        
+
         // when
         Reservation reservation = webTicketManager.reserve(TRAIN_ID, 2);
 

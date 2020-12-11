@@ -1,40 +1,39 @@
 package com.traintrain;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class TrainTopology {
-    private int reservedSeats;
     private List<Seat> seats;
 
     public TrainTopology(List<Seat> seats) {
         this.seats = seats;
     }
-    
-    public TrainTopology(String trainTopol) throws IOException {
 
-    	seats = new ArrayList<>();
+    public static TrainTopology fromJson(String trainTopologyJson) throws IOException {
+
+        List<Seat> seats = new ArrayList<>();
         //var sample:
         //"{\"seats\": {\"1A\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"}}}";
         final ObjectMapper objectMapper = new ObjectMapper();
 
-        Map<String, Map<String, SeatJson>> stuff_in_stuff = objectMapper.readValue(trainTopol, new TypeReference<Map<String, Map<String, SeatJson>>>() {
+        Map<String, Map<String, SeatJson>> stuff_in_stuff = objectMapper.readValue(trainTopologyJson, new TypeReference<Map<String, Map<String, SeatJson>>>() {
         });
 
         for (Map<String, SeatJson> value : stuff_in_stuff.values()) {
             for (SeatJson seatJson : value.values()) {
                 int seat_number = Integer.parseInt(seatJson.seat_number);
                 seats.add(new Seat(seatJson.coach, seat_number, seatJson.booking_reference));
-                if (!(new Seat(seatJson.coach, seat_number, seatJson.booking_reference).getBookingRef() == "")) {
-                    this.reservedSeats++;
-                }
+
             }
         }
+
+        return new TrainTopology(seats);
     }
 
     public int getReservedSeats() {
@@ -46,19 +45,15 @@ public class TrainTopology {
     }
 
     public int getMaxSeat() {
-        return this.seats.size();
-    }
-
-    public boolean hasLessThanThreshold(int i) {
-        return reservedSeats < i;
+        return seats.size();
     }
 
     boolean doNotExceedTrainCapacity(int nbSeatRequested) {
-        return (getReservedSeats() + nbSeatRequested) <= Math.floor(ThresholdManager.getMaxRes() * getMaxSeat());
+        return getReservedSeats() + nbSeatRequested <= Math.floor(ThresholdManager.getMaxRes() * getMaxSeat());
     }
 
     public List<Seat> findAvailableSeats(int nbSeatRequested) {
-        List<Seat> availableSeats = new ArrayList<Seat>();
+        List<Seat> availableSeats = new ArrayList<>();
         int numberOfReserv = 0;
         // find seats to reserve
         for (Seat seat : getSeats()) {

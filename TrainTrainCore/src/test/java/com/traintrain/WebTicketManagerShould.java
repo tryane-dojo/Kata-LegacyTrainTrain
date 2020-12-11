@@ -47,7 +47,7 @@ public class WebTicketManagerShould {
         when(bookingReferenceService.getBookingReference()).thenReturn(bookingRef);
 
         // when
-        Reservation reservation = webTicketManager.reserve(TRAIN_ID, nbSeatRequested);
+        Reservation reservation = webTicketManager.attemptToBook(TRAIN_ID, nbSeatRequested);
 
         //then
         assertThat(reservation.getTrain_id()).isEqualTo(TRAIN_ID);
@@ -67,7 +67,7 @@ public class WebTicketManagerShould {
         when(dataTrainService.getTrainTopology(TRAIN_ID)).thenReturn(trainTopology);
 
         // when
-        Reservation reservation = webTicketManager.reserve(TRAIN_ID, 1);
+        Reservation reservation = webTicketManager.attemptToBook(TRAIN_ID, 1);
 
         // then
         Assertions.assertThat(reservation.getBooking_reference()).isNull();
@@ -84,7 +84,7 @@ public class WebTicketManagerShould {
         when(dataTrainService.getTrainTopology(TRAIN_ID)).thenReturn(trainTopology);
 
         // when
-        Reservation reservation = webTicketManager.reserve(TRAIN_ID, 2);
+        Reservation reservation = webTicketManager.attemptToBook(TRAIN_ID, 2);
 
         // then
         Assertions.assertThat(reservation.getBooking_reference()).isNotEmpty();

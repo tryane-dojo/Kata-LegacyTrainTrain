@@ -17,7 +17,7 @@ public class WebTicketManager {
         trainDataService = new TrainDataService();
     }
 
-    public Reservation reserve(String trainId, int nbSeatRequested) throws IOException {
+    public Reservation attemptToBook(String trainId, int nbSeatRequested) throws IOException {
 
         // get the train
         TrainTopology train = trainDataService.getTrainTopology(trainId);

@@ -38,7 +38,7 @@ public class WebTicketManager {
             List<Seat> availableSeats = new ArrayList<Seat>();
             // find seats to reserve
             for (Seat seat : train.getSeats()) {
-                if (seat.getBookingRef() == "") {
+                if (seat.isFree()) {
                     if (numberOfReserv < nbSeatRequested) {
                         numberOfReserv++;
                         availableSeats.add(seat);

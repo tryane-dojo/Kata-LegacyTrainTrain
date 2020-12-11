@@ -77,6 +77,10 @@ public class Seat {
 			return false;
 		return true;
 	}
+
+    boolean isFree() {
+        return getBookingRef() == "";
+    }
     
     
 }

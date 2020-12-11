@@ -34,8 +34,8 @@ public class WebTicketManager {
         // get the train
         TrainTopology train = dataTrainService.getTrainTopology(trainId);
         if (train.doNotExceedTrainCapacity(nbSeatRequested)) {
-            int numberOfReserv = 0;
             List<Seat> availableSeats = new ArrayList<Seat>();
+            int numberOfReserv = 0;
             // find seats to reserve
             for (Seat seat : train.getSeats()) {
                 if (seat.isFree()) {
@@ -46,17 +46,13 @@ public class WebTicketManager {
                 }
             }
             
-            if (numberOfReserv == nbSeatRequested) {
+            if (availableSeats.size() == nbSeatRequested) {
                 String bookingRef = bookingReferenceService.getBookingReference();
                 for (Seat availableSeat : availableSeats) {
                     availableSeat.setBookingRef(bookingRef);
                 }
                 this.trainCaching.Save(toSeatsEntities(trainId, availableSeats, bookingRef));
                 
-                if (numberOfReserv == 0) {
-                    String output = String.format("Reserved seat(s): ", numberOfReserv);
-                    System.out.println(output);
-                }
                 dataTrainService.applyReservation(trainId, availableSeats, bookingRef);
                 return new Reservation(trainId, bookingRef, availableSeats);
             } else {

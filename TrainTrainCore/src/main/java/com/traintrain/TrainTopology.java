@@ -4,23 +4,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TrainTopology {
-    private List<Seat>  seats;
     private List<Coach> coaches;
 
     public TrainTopology(List<Seat> allSeats) {
-        seats = allSeats;
-
         coaches = new ArrayList<>();
         allSeats.stream().collect(Collectors.groupingBy(Seat::getCoachName)).values().forEach(seats -> {
             coaches.add(new Coach(seats));
         });
-
     }
 
     public static TrainTopology fromJson(String trainTopologyJson) throws IOException {
@@ -45,19 +42,15 @@ public class TrainTopology {
     }
 
     public int getReservedSeats() {
-        return (int) seats.stream().filter(seat -> seat.getBookingRef().isEmpty() == false).count();
+        return (int) getSeats().stream().filter(Predicate.not(Seat::isFree)).count();
     }
 
     public List<Seat> getSeats() {
-        return seats;
-    }
-
-    public int getMaxSeat() {
-        return seats.size();
+        return coaches.stream().map(Coach::getSeats).collect(Collectors.flatMapping(List::stream, Collectors.toList()));
     }
 
     boolean doNotExceedTrainCapacity(int nbSeatRequested) {
-        return getReservedSeats() + nbSeatRequested <= Math.floor(ThresholdManager.getMaxRes() * getMaxSeat());
+        return getReservedSeats() + nbSeatRequested <= Math.floor(ThresholdManager.getMaxRes() * getSeats().size());
     }
 
     public BookingAttempt builBookingAttempt(int nbSeatRequested) {

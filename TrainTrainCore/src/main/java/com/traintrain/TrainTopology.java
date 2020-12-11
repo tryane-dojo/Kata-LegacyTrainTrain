@@ -56,4 +56,19 @@ public class TrainTopology {
     boolean doNotExceedTrainCapacity(int nbSeatRequested) {
         return (getReservedSeats() + nbSeatRequested) <= Math.floor(ThresholdManager.getMaxRes() * getMaxSeat());
     }
+
+    List<Seat> findAvailableSeats(int nbSeatRequested) {
+        List<Seat> availableSeats = new ArrayList<Seat>();
+        int numberOfReserv = 0;
+        // find seats to reserve
+        for (Seat seat : getSeats()) {
+            if (seat.isFree()) {
+                if (numberOfReserv < nbSeatRequested) {
+                    numberOfReserv++;
+                    availableSeats.add(seat);
+                }
+            }
+        }
+        return availableSeats;
+    }
 }

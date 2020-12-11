@@ -34,17 +34,7 @@ public class WebTicketManager {
         // get the train
         TrainTopology train = dataTrainService.getTrainTopology(trainId);
         if (train.doNotExceedTrainCapacity(nbSeatRequested)) {
-            List<Seat> availableSeats = new ArrayList<Seat>();
-            int numberOfReserv = 0;
-            // find seats to reserve
-            for (Seat seat : train.getSeats()) {
-                if (seat.isFree()) {
-                    if (numberOfReserv < nbSeatRequested) {
-                        numberOfReserv++;
-                        availableSeats.add(seat);
-                    }
-                }
-            }
+            List<Seat> availableSeats = train.findAvailableSeats(nbSeatRequested);
             
             if (availableSeats.size() == nbSeatRequested) {
                 String bookingRef = bookingReferenceService.getBookingReference();

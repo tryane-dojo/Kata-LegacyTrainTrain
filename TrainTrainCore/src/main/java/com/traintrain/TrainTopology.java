@@ -52,7 +52,7 @@ public class TrainTopology {
         return coaches.stream().map(Coach::getSeats).collect(Collectors.flatMapping(List::stream, Collectors.toList()));
     }
 
-    boolean doNotExceedTrainCapacity(int nbSeatRequested) {
+    boolean canBookWithoutExceedCapacity(int nbSeatRequested) {
         return getReservedSeats() + nbSeatRequested <= Math.floor(ThresholdManager.getMaxRes() * getSeats().size());
     }
 

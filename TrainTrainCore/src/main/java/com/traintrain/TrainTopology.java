@@ -74,6 +74,6 @@ public class TrainTopology {
 
     public BookingAttempt builBookingAttempt(int nbSeatRequested) {
         List<Seat> availableSeats = findAvailableSeats(nbSeatRequested);
-        return new BookingAttempt(availableSeats);
+        return new BookingAttempt(nbSeatRequested, availableSeats);
     }
 }

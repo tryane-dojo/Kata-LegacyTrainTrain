@@ -4,14 +4,20 @@ import java.util.List;
 
 public class BookingAttempt {
 
-    private List<Seat> availableSeats;
+    private List<Seat> seats;
+    private int nbSeatRequested;
 
-    public BookingAttempt(List<Seat> availableSeats) {
-        this.availableSeats = availableSeats;
+    public BookingAttempt(int nbSeatRequested, List<Seat> seats) {
+        this.nbSeatRequested = nbSeatRequested;
+        this.seats = seats;
     }
 
     public List<Seat> getSeats() {
-        return availableSeats;
+        return seats;
+    }
+
+    boolean isFullfiled() {
+        return getSeats().size() == nbSeatRequested;
     }
 
 }

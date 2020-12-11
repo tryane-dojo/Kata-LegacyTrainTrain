@@ -37,7 +37,7 @@ public class WebTicketManager {
             BookingAttempt bookingAttempt = train.builBookingAttempt(nbSeatRequested);
             List<Seat> availableSeats = bookingAttempt.getSeats();
             
-            if (availableSeats.size() == nbSeatRequested) {
+            if (bookingAttempt.isFullfiled()) {
                 String bookingRef = bookingReferenceService.getBookingReference();
                 for (Seat availableSeat : availableSeats) {
                     availableSeat.setBookingRef(bookingRef);

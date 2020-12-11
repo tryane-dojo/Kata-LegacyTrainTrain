@@ -27,27 +27,27 @@ public class WebTicketManager {
         trainCaching.Clear();
     }
 
-    public Reservation reserve(String train, int seats) throws IOException, InterruptedException {
+    public Reservation reserve(String trainId, int nbSeatRequested) throws IOException, InterruptedException {
         List<Seat> availableSeats = new ArrayList<Seat>();
         String bookingRef;
 
         // get the train
-        String JsonTrain = getTrain(train);
-        Train trainInst = new Train(JsonTrain);
-        if ((trainInst.reservedSeats + seats) <= Math.floor(ThresholdManager.getMaxRes() * trainInst.getMaxSeat())) {
+        String JsonTrain = getTrainTopology(trainId);
+        Train train = new Train(JsonTrain);
+        if ((train.reservedSeats + nbSeatRequested) <= Math.floor(ThresholdManager.getMaxRes() * train.getMaxSeat())) {
             int numberOfReserv = 0;
             // find seats to reserve
-            for (Seat seat : trainInst.seats) {
+            for (Seat seat : train.seats) {
                 if (seat.getBookingRef() == "") {
-                    if (numberOfReserv < seats) {
+                    if (numberOfReserv < nbSeatRequested) {
                         numberOfReserv++;
                         availableSeats.add(seat);
                     }
                 }
             }
             
-            if (numberOfReserv != seats) {
-                return new Reservation(train);
+            if (numberOfReserv != nbSeatRequested) {
+                return new Reservation(trainId);
             } else {
                 Client client = ClientBuilder.newClient();
                 try {
@@ -61,18 +61,16 @@ public class WebTicketManager {
                 }
             }
 
-            if (numberOfReserv == seats) {
+            if (numberOfReserv == nbSeatRequested) {
 
-                this.trainCaching.Save(toSeatsEntities(train, availableSeats, bookingRef));
+                this.trainCaching.Save(toSeatsEntities(trainId, availableSeats, bookingRef));
 
                 if (numberOfReserv == 0) {
                     String output = String.format("Reserved seat(s): ", numberOfReserv);
                     System.out.println(output);
                 }
 
-                String todod = "[TODOD]";
-
-                Reservation postReservation = new Reservation(train, bookingRef, availableSeats);
+                Reservation postReservation = new Reservation(trainId, bookingRef, availableSeats);
 
                 Client client = ClientBuilder.newClient();
                 try {
@@ -94,25 +92,25 @@ public class WebTicketManager {
                                         
                     String string = new ObjectMapper().writeValueAsString(postReservation);
                     System.out.println(string);
-                    request.post(Entity.entity(form,MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+                    request.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
                 }
                 finally {
                     client.close();
                 }
-                return new Reservation(train, bookingRef, availableSeats);
+                return new Reservation(trainId, bookingRef, availableSeats);
             }
 
         }
-        return new Reservation(train);
+        return new Reservation(trainId);
     }
 
-    protected String getTrain(String train) {
+    protected String getTrainTopology(String trainId) {
         String JsonTrainTopology;
         Client client = ClientBuilder.newClient();
         try {
 
             WebTarget target = client.target(urITrainDataService + "/data_for_train/");
-            WebTarget path = target.path(String.valueOf(train));
+            WebTarget path = target.path(String.valueOf(trainId));
             Invocation.Builder request = path.request(MediaType.APPLICATION_JSON);
             JsonTrainTopology = request.get(String.class);
         }

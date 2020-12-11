@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DataTrainService implements IDataTrainService {
+public class TrainDataService implements ITrainDataService {
 
 	@Override
 	public void applyReservation(String trainId, List<Seat> availableSeats, String bookingRef)

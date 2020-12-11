@@ -30,7 +30,7 @@ public class WebTicketManagerShould {
     IBookingReferenceService bookingReferenceService;
     
     @Mock
-    IDataTrainService dataTrainService;
+    ITrainDataService dataTrainService;
 
     @BeforeEach
     public void beforeEach() throws InterruptedException, IOException {

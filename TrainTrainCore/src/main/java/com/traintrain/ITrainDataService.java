@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-public interface IDataTrainService {
+public interface ITrainDataService {
 
 	void applyReservation(String trainId, List<Seat> availableSeats, String bookingRef)
 			throws JsonProcessingException ;

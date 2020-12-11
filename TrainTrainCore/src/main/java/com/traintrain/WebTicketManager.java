@@ -12,12 +12,12 @@ public class WebTicketManager {
     
     static final String urITrainDataService = "http://localhost:8081";
     private IBookingReferenceService bookingReferenceService;
-    private IDataTrainService dataTrainService = new DataTrainService();
+    private ITrainDataService trainDataService = new TrainDataService();
     
 
-    public WebTicketManager(IBookingReferenceService bookingReferenceService, IDataTrainService dataTrainService) throws InterruptedException {
+    public WebTicketManager(IBookingReferenceService bookingReferenceService, ITrainDataService dataTrainService) throws InterruptedException {
         this.bookingReferenceService = bookingReferenceService;
-        this.dataTrainService = dataTrainService;
+        this.trainDataService = dataTrainService;
     }
     
     public WebTicketManager() throws InterruptedException {
@@ -27,14 +27,14 @@ public class WebTicketManager {
     public Reservation reserve(String trainId, int nbSeatRequested) throws IOException, InterruptedException {
 
         // get the train
-        TrainTopology train = dataTrainService.getTrainTopology(trainId);
+        TrainTopology train = trainDataService.getTrainTopology(trainId);
         if (train.doNotExceedTrainCapacity(nbSeatRequested)) {
             BookingAttempt bookingAttempt = train.builBookingAttempt(nbSeatRequested);
             if (bookingAttempt.isFullfiled()) {
                 String bookingRef = bookingReferenceService.getBookingReference();
                 bookingAttempt.assignReference(bookingRef);
                 
-                dataTrainService.applyReservation(trainId, bookingAttempt.getSeats(), bookingRef);
+                trainDataService.applyReservation(trainId, bookingAttempt.getSeats(), bookingRef);
                 return new Reservation(trainId, bookingRef, bookingAttempt.getSeats());
             } else {
                 return new Reservation(trainId);

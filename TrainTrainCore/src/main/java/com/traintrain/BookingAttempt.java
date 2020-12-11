@@ -36,6 +36,8 @@ public class BookingAttempt {
 
     public String getReference() {
         return bookingRef;
+    BookingConfirmation confirm() {
+        return new BookingConfirmation(trainId, reference, seats);
     }
 
 }

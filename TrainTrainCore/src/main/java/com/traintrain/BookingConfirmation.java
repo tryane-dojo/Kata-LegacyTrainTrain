@@ -4,23 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Reservation {
+public class BookingConfirmation {
 
-    private String train_id;
-    
-    private String booking_reference;
-    
+    private String       train_id;
+
+    private String       booking_reference;
+
     private List<String> seats = new ArrayList<>();
 
-    public Reservation(String train_id) {
-        super();
-        this.train_id = train_id;
-    }
-
-    public Reservation(String train, String bookingRef, List<Seat> availableSeats) {
-        this.train_id = train;
-        this.booking_reference = bookingRef;
-        this.seats = availableSeats.stream().map(seat -> seat.getSeatNumber() + seat.getCoachName()).collect(Collectors.toList());
+    public BookingConfirmation(String train, String bookingRef, List<Seat> availableSeats) {
+        train_id = train;
+        booking_reference = bookingRef;
+        seats = availableSeats.stream().map(seat -> seat.getSeatNumber() + seat.getCoachName()).collect(Collectors.toList());
     }
 
     public String getTrain_id() {
@@ -46,7 +41,5 @@ public class Reservation {
     public void setSeats(List<String> seats) {
         this.seats = seats;
     }
-    
-    
-    
+
 }

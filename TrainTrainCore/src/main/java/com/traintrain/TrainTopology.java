@@ -65,6 +65,6 @@ public class TrainTopology {
             }
         }
 
-        return new BookingAttempt(trainId, nbSeatRequested, List.of());
+        return new BookingAttemptFailure(trainId, nbSeatRequested);
     }
 }

@@ -20,4 +20,10 @@ public class BookingAttempt {
         return getSeats().size() == nbSeatRequested;
     }
 
+    void assignReference(String bookingRef) {
+        for (Seat seat : seats) {
+            seat.setBookingRef(bookingRef);
+        }
+    }
+
 }

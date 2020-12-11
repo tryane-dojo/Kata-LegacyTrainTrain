@@ -35,17 +35,13 @@ public class WebTicketManager {
         TrainTopology train = dataTrainService.getTrainTopology(trainId);
         if (train.doNotExceedTrainCapacity(nbSeatRequested)) {
             BookingAttempt bookingAttempt = train.builBookingAttempt(nbSeatRequested);
-            List<Seat> availableSeats = bookingAttempt.getSeats();
-            
             if (bookingAttempt.isFullfiled()) {
                 String bookingRef = bookingReferenceService.getBookingReference();
-                for (Seat availableSeat : availableSeats) {
-                    availableSeat.setBookingRef(bookingRef);
-                }
-                this.trainCaching.Save(toSeatsEntities(trainId, availableSeats, bookingRef));
+                bookingAttempt.assignReference(bookingRef);
+                this.trainCaching.Save(toSeatsEntities(trainId, bookingAttempt.getSeats(), bookingRef));
                 
-                dataTrainService.applyReservation(trainId, availableSeats, bookingRef);
-                return new Reservation(trainId, bookingRef, availableSeats);
+                dataTrainService.applyReservation(trainId, bookingAttempt.getSeats(), bookingRef);
+                return new Reservation(trainId, bookingRef, bookingAttempt.getSeats());
             } else {
                 return new Reservation(trainId);
             }

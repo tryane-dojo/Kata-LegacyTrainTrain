@@ -56,7 +56,7 @@ public class TrainDataService implements ITrainDataService {
         } finally {
             client.close();
         }
-        return TrainTopology.fromJson(JsonTrainTopology);
+        return TrainTopology.fromJson(trainId, JsonTrainTopology);
     }
 
 }

@@ -39,7 +39,7 @@ public class WebTicketManagerShould {
     void reserve_seats_requested_when_train_is_empty() throws IOException, InterruptedException {
         //given
         TrainTopology trainTopology = TrainTopology
-                .fromJson("{\"seats\": {\"1A\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"}, \"3A\": {\"booking_reference\": \"\", \"seat_number\": \"3\", \"coach\": \"A\"}, \"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"}}}");
+                .fromJson(TRAIN_ID, "{\"seats\": {\"1A\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"}, \"3A\": {\"booking_reference\": \"\", \"seat_number\": \"3\", \"coach\": \"A\"}, \"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"}}}");
         when(dataTrainService.getTrainTopology(TRAIN_ID)).thenReturn(trainTopology);
         int nbSeatRequested = 1;
         String bookingRef = "2dadaz4";
@@ -63,7 +63,7 @@ public class WebTicketManagerShould {
     public void not_reserve_if_train_is_over_threshold() throws IOException, InterruptedException {
         // given
         TrainTopology trainTopology = TrainTopology
-                .fromJson("{\"seats\": {\"1A\": {\"booking_reference\": \"aaa\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"bbbbb\", \"seat_number\": \"2\", \"coach\": \"A\"}, \"3A\": {\"booking_reference\": \"cccccc\", \"seat_number\": \"3\", \"coach\": \"A\"}, \"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"}}}");
+                .fromJson(TRAIN_ID, "{\"seats\": {\"1A\": {\"booking_reference\": \"aaa\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"bbbbb\", \"seat_number\": \"2\", \"coach\": \"A\"}, \"3A\": {\"booking_reference\": \"cccccc\", \"seat_number\": \"3\", \"coach\": \"A\"}, \"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"}}}");
         when(dataTrainService.getTrainTopology(TRAIN_ID)).thenReturn(trainTopology);
 
         // when
@@ -78,7 +78,7 @@ public class WebTicketManagerShould {
     public void reserve_all_seats_in_same_coach() throws IOException, InterruptedException {
         // given
         TrainTopology trainTopology = TrainTopology
-                .fromJson("{\"seats\": {" + "\"1A\": {\"booking_reference\": \"a\", \"seat_number\": \"1\", \"coach\": \"A\"}, " + "\"2A\": {\"booking_reference\": \"a\", \"seat_number\": \"2\", \"coach\": \"A\"}, " + "\"3A\": {\"booking_reference\": \"a\", \"seat_number\": \"3\", \"coach\": \"A\"}, " + "\"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"}, " + "\"1B\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"B\"}, " + "\"2B\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"B\"}, " + "\"3B\": {\"booking_reference\": \"\", \"seat_number\": \"3\", \"coach\": \"B\"}, " + "\"4B\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"B\"}, " + "\"5B\": {\"booking_reference\": \"\", \"seat_number\": \"5\", \"coach\": \"B\"} " + "}}");
+                .fromJson(TRAIN_ID, "{\"seats\": {" + "\"1A\": {\"booking_reference\": \"a\", \"seat_number\": \"1\", \"coach\": \"A\"}, " + "\"2A\": {\"booking_reference\": \"a\", \"seat_number\": \"2\", \"coach\": \"A\"}, " + "\"3A\": {\"booking_reference\": \"a\", \"seat_number\": \"3\", \"coach\": \"A\"}, " + "\"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"}, " + "\"1B\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"B\"}, " + "\"2B\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"B\"}, " + "\"3B\": {\"booking_reference\": \"\", \"seat_number\": \"3\", \"coach\": \"B\"}, " + "\"4B\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"B\"}, " + "\"5B\": {\"booking_reference\": \"\", \"seat_number\": \"5\", \"coach\": \"B\"} " + "}}");
         String bookingRef = "2dadaz4";
         when(bookingReferenceService.getBookingReference()).thenReturn(bookingRef);
         when(dataTrainService.getTrainTopology(TRAIN_ID)).thenReturn(trainTopology);

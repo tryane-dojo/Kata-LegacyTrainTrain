@@ -11,16 +11,19 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TrainTopology {
+
+    private String      trainId;
     private List<Coach> coaches;
 
-    public TrainTopology(List<Seat> allSeats) {
+    public TrainTopology(String trainId, List<Seat> allSeats) {
+        this.trainId = trainId;
         coaches = new ArrayList<>();
         allSeats.stream().collect(Collectors.groupingBy(Seat::getCoachName)).values().forEach(seats -> {
-            coaches.add(new Coach(seats));
+            coaches.add(new Coach(trainId, seats));
         });
     }
 
-    public static TrainTopology fromJson(String trainTopologyJson) throws IOException {
+    public static TrainTopology fromJson(String trainId, String trainTopologyJson) throws IOException {
 
         List<Seat> seats = new ArrayList<>();
         //var sample:
@@ -38,7 +41,7 @@ public class TrainTopology {
             }
         }
 
-        return new TrainTopology(seats);
+        return new TrainTopology(trainId, seats);
     }
 
     public int getReservedSeats() {
@@ -62,6 +65,6 @@ public class TrainTopology {
             }
         }
 
-        return new BookingAttempt(nbSeatRequested, List.of());
+        return new BookingAttempt(trainId, nbSeatRequested, List.of());
     }
 }

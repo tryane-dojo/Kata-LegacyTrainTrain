@@ -4,12 +4,18 @@ import java.util.List;
 
 public class BookingAttempt {
 
+    private String     trainId;
     private List<Seat> seats;
-    private int nbSeatRequested;
+    private int        nbSeatRequested;
 
-    public BookingAttempt(int nbSeatRequested, List<Seat> seats) {
+    public BookingAttempt(String trainId, int nbSeatRequested, List<Seat> seats) {
+        this.trainId = trainId;
         this.nbSeatRequested = nbSeatRequested;
         this.seats = seats;
+    }
+
+    public String getTrainId() {
+        return trainId;
     }
 
     public List<Seat> getSeats() {

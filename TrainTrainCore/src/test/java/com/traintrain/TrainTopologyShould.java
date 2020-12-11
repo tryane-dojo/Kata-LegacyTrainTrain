@@ -11,10 +11,12 @@ import org.junit.jupiter.api.Test;
 
 public class TrainTopologyShould {
 
+    private static final String TRAIN_ID = "express_2000";
+
     @Test
     public void should_deserialize_train_topology() throws IOException {
         String trainTopologyJson = "{\"seats\": {\"1A\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"}}}";
-        TrainTopology trainTopology = TrainTopology.fromJson(trainTopologyJson);
+        TrainTopology trainTopology = TrainTopology.fromJson(TRAIN_ID, trainTopologyJson);
 
         AssertSeats(trainTopology.getSeats());
     }
@@ -33,7 +35,7 @@ public class TrainTopologyShould {
         @Test
         void obtains_booking_with_first_seats_when_train_is_empty() {
             // given
-            TrainTopology train = TrainTopologyBuilder.aTrain()
+            TrainTopology train = TrainTopologyBuilder.aTrain(TRAIN_ID)
                     .withFreeSeat(1, "A")
                     .withFreeSeat(2, "A")
                     .withFreeSeat(3, "A")
@@ -52,7 +54,7 @@ public class TrainTopologyShould {
         @Test
         void obtains_booking_with_free_seats_when_seats_are_booked() {
             // given
-            TrainTopology train = TrainTopologyBuilder.aTrain()
+            TrainTopology train = TrainTopologyBuilder.aTrain(TRAIN_ID)
                     .withBookedSeat(1, "A", "::irrelevant_booking_reference::")
                     .withFreeSeat(2, "A")
                     .withFreeSeat(3, "A")
@@ -71,7 +73,7 @@ public class TrainTopologyShould {
         @Test
         void obtains_booking_with_all_seats_in_the_same_coach() {
             // given
-            TrainTopology train = TrainTopologyBuilder.aTrain()
+            TrainTopology train = TrainTopologyBuilder.aTrain(TRAIN_ID)
                     .withBookedSeat(1, "A", "::irrelevant_booking_reference::")
                     .withBookedSeat(2, "A", "::irrelevant_booking_reference::")
                     .withFreeSeat(3, "A")

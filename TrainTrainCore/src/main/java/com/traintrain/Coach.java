@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 public class Coach {
 
     private List<Seat> seats;
+    private String     trainId;
 
-    public Coach(List<Seat> seats) {
+    public Coach(String trainId, List<Seat> seats) {
+        this.trainId = trainId;
         this.seats = seats;
     }
 
@@ -17,7 +19,7 @@ public class Coach {
 
     public BookingAttempt buildBookingAttempt(int nbSeatRequested) {
         List<Seat> availableSeats = findAvailableSeats(nbSeatRequested);
-        return new BookingAttempt(nbSeatRequested, availableSeats);
+        return new BookingAttempt(trainId, nbSeatRequested, availableSeats);
     }
 
     private List<Seat> findAvailableSeats(int nbSeatRequested) {

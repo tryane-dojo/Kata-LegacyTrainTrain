@@ -5,10 +5,16 @@ import java.util.List;
 
 public class TrainTopologyBuilder {
 
-    private List<Seat> seats= new ArrayList<>();
+    private String     trainId;
+    private List<Seat> seats = new ArrayList<>();
 
-    public static TrainTopologyBuilder aTrain() {
-        return new TrainTopologyBuilder();
+    private TrainTopologyBuilder(String trainId) {
+        this.trainId = trainId;
+    }
+
+    public static TrainTopologyBuilder aTrain(String trainId) {
+
+        return new TrainTopologyBuilder(trainId);
     }
 
     public TrainTopologyBuilder withFreeSeat(int seatNumber, String coachName) {
@@ -24,8 +30,7 @@ public class TrainTopologyBuilder {
     }
 
     public TrainTopology build() {
-        return new TrainTopology(List.copyOf(seats));
+        return new TrainTopology(trainId, List.copyOf(seats));
     }
-
 
 }

@@ -19,7 +19,6 @@ public class WebTicketManager {
 
     public Reservation attemptToBook(String trainId, int nbSeatRequested) throws IOException {
 
-        // get the train
         TrainTopology train = trainDataService.getTrainTopology(trainId);
         if (train.canBookWithoutExceedCapacity(nbSeatRequested)) {
             BookingAttempt bookingAttempt = train.builBookingAttempt(nbSeatRequested);
@@ -27,12 +26,12 @@ public class WebTicketManager {
                 String bookingRef = bookingReferenceService.getBookingReference();
                 bookingAttempt.assignReference(bookingRef);
 
-                trainDataService.applyReservation(trainId, bookingAttempt.getSeats(), bookingRef);
+                trainDataService.bookSeats(bookingAttempt);
                 return new Reservation(trainId, bookingRef, bookingAttempt.getSeats());
             } else {
-                return new Reservation(trainId);
+                return Reservation.emtpyBooking(trainId);
             }
         }
-        return new Reservation(trainId);
+        return Reservation.emtpyBooking(trainId);
     }
 }

@@ -1,7 +1,6 @@
 package com.traintrain;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -18,31 +17,30 @@ public class TrainDataService implements ITrainDataService {
     static final String urITrainDataService = "http://localhost:8081";
 
     @Override
-    public void applyReservation(String trainId, List<Seat> availableSeats, String bookingRef)
-            throws JsonProcessingException {
-
+    public void bookSeats(BookingAttempt bookingAttempt) throws JsonProcessingException {
         Client client = ClientBuilder.newClient();
         try {
             WebTarget webTarget = client.target(TrainDataService.urITrainDataService + "/reserve/");
             Invocation.Builder request = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
 
             Form form = new Form();
-            form.param("train_id", trainId);
+            form.param("train_id", bookingAttempt.getTrainId());
 
             StringBuilder builder = new StringBuilder();
             builder.append("[");
-            for (Seat seat : availableSeats) {
+            for (Seat seat : bookingAttempt.getSeats()) {
                 builder.append("\"").append(seat.toString()).append("\"");
             }
             builder.append("]");
 
             form.param("seats", builder.toString());
-            form.param("booking_reference", bookingRef);
+            form.param("booking_reference", bookingAttempt.getReference());
 
             request.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
         } finally {
             client.close();
         }
+
     }
 
     @Override

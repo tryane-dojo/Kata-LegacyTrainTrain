@@ -7,6 +7,7 @@ public class BookingAttempt {
     private String     trainId;
     private List<Seat> seats;
     private int        nbSeatRequested;
+    private String     bookingRef;
 
     public BookingAttempt(String trainId, int nbSeatRequested, List<Seat> seats) {
         this.trainId = trainId;
@@ -27,9 +28,14 @@ public class BookingAttempt {
     }
 
     void assignReference(String bookingRef) {
+        this.bookingRef = bookingRef;
         for (Seat seat : seats) {
             seat.setBookingRef(bookingRef);
         }
+    }
+
+    public String getReference() {
+        return bookingRef;
     }
 
 }

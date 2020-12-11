@@ -1,17 +1,16 @@
 package com.traintrain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -19,15 +18,18 @@ import org.mockito.quality.Strictness;
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class WebTicketManagerShould {
 
-    private static final String TRAIN_ID = "express_2000";
+    private static final String    TRAIN_ID = "express_2000";
 
-    WebTicketManager            webTicketManager;
-
-    @Mock
-    IBookingReferenceService    bookingReferenceService;
+    WebTicketManager               webTicketManager;
 
     @Mock
-    ITrainDataService           dataTrainService;
+    IBookingReferenceService       bookingReferenceService;
+
+    @Mock
+    ITrainDataService              dataTrainService;
+
+    @Captor
+    ArgumentCaptor<BookingAttempt> bookingAttemptCaptor;
 
     @BeforeEach
     public void beforeEach() throws InterruptedException, IOException {
@@ -53,9 +55,8 @@ public class WebTicketManagerShould {
         assertThat(reservation.getTrain_id()).isEqualTo(TRAIN_ID);
         assertThat(reservation.getBooking_reference()).isEqualTo(bookingRef);
         assertThat(reservation.getSeats()).containsExactly("1A");
-        ArgumentCaptor<List<Seat>> seatsCaptor = ArgumentCaptor.forClass(List.class);
-        verify(dataTrainService).applyReservation(eq(TRAIN_ID), seatsCaptor.capture(), eq(bookingRef));
-        assertThat(seatsCaptor.getValue()).containsExactly(new Seat("A", 1, bookingRef));
+        verify(dataTrainService).bookSeats(bookingAttemptCaptor.capture());
+        assertThat(bookingAttemptCaptor.getValue().getSeats()).containsExactly(new Seat("A", 1, bookingRef));
 
     }
 

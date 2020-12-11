@@ -14,17 +14,13 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.traintrain.BookingAttempt;
-import com.traintrain.Seat;
-import com.traintrain.SeatJson;
-import com.traintrain.TrainTopology;
 
 public class TrainTopologyShould {
 
     @Test
     public void should_deserialize_train_topology() {
         String trainTopology = "{\"seats\": {\"1A\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"}}}";
-        List<Seat> Seats = new ArrayList<Seat>();
+        List<Seat> Seats = new ArrayList<>();
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();

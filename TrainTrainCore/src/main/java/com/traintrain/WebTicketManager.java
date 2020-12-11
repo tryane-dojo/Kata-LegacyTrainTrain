@@ -1,25 +1,18 @@
 package com.traintrain;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.cache.ITrainCaching;
-import com.cache.SeatEntity;
-import com.cache.TrainCaching;
 
 public class WebTicketManager {
-    
-    static final String urITrainDataService = "http://localhost:8081";
-    private IBookingReferenceService bookingReferenceService;
-    private ITrainDataService trainDataService = new TrainDataService();
-    
 
-    public WebTicketManager(IBookingReferenceService bookingReferenceService, ITrainDataService dataTrainService) throws InterruptedException {
+    static final String              urITrainDataService = "http://localhost:8081";
+    private IBookingReferenceService bookingReferenceService;
+    private ITrainDataService        trainDataService    = new TrainDataService();
+
+    public WebTicketManager(IBookingReferenceService bookingReferenceService, ITrainDataService trainDataService) throws InterruptedException {
         this.bookingReferenceService = bookingReferenceService;
-        this.trainDataService = dataTrainService;
+        this.trainDataService = trainDataService;
     }
-    
+
     public WebTicketManager() throws InterruptedException {
         bookingReferenceService = new BookingReferenceService();
     }
@@ -33,7 +26,7 @@ public class WebTicketManager {
             if (bookingAttempt.isFullfiled()) {
                 String bookingRef = bookingReferenceService.getBookingReference();
                 bookingAttempt.assignReference(bookingRef);
-                
+
                 trainDataService.applyReservation(trainId, bookingAttempt.getSeats(), bookingRef);
                 return new Reservation(trainId, bookingRef, bookingAttempt.getSeats());
             } else {

@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Train {
+public class TrainTopology {
     public int reservedSeats;
     public List<Seat> seats;
 
-    public Train(String trainTopol) throws IOException {
+    public TrainTopology(String trainTopol) throws IOException {
 
         seats = new ArrayList<Seat>();
 

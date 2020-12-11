@@ -32,8 +32,7 @@ public class WebTicketManager {
         String bookingRef;
 
         // get the train
-        String JsonTrain = getTrainTopology(trainId);
-        Train train = new Train(JsonTrain);
+        TrainTopology train = getTrainTopology(trainId);
         if ((train.reservedSeats + nbSeatRequested) <= Math.floor(ThresholdManager.getMaxRes() * train.getMaxSeat())) {
             int numberOfReserv = 0;
             // find seats to reserve
@@ -104,11 +103,12 @@ public class WebTicketManager {
         return new Reservation(trainId);
     }
 
-    protected String getTrainTopology(String trainId) {
+    protected TrainTopology getTrainTopology(String trainId) throws IOException {
+        
         String JsonTrainTopology;
         Client client = ClientBuilder.newClient();
         try {
-
+        
             WebTarget target = client.target(urITrainDataService + "/data_for_train/");
             WebTarget path = target.path(String.valueOf(trainId));
             Invocation.Builder request = path.request(MediaType.APPLICATION_JSON);
@@ -117,9 +117,10 @@ public class WebTicketManager {
         finally {
             client.close();
         }
-        return JsonTrainTopology;
+        String trainTopology = JsonTrainTopology;
+        return new TrainTopology(trainTopology);
     }
-
+    
     protected String getBookRef(Client client) {
         String booking_ref;
 

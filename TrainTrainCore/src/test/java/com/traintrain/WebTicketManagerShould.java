@@ -14,7 +14,15 @@ public class WebTicketManagerShould {
 
     @BeforeEach
     public void beforeEach() throws InterruptedException {
-        webTicketManager = new WebTicketManager();
+        webTicketManager = new WebTicketManager() {
+
+            @Override
+            protected TrainTopology getTrainTopology(String trainId) throws IOException {
+                TrainTopology trainTopology = new TrainTopology("{\"seats\": {\"1A\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"}, \"3A\": {\"booking_reference\": \"\", \"seat_number\": \"3\", \"coach\": \"A\"}, \"4A\": {\"booking_reference\": \"\", \"seat_number\": \"4\", \"coach\": \"A\"}}}");
+                return trainTopology;
+            }
+            
+        };
     }
 
     @Test

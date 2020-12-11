@@ -52,19 +52,8 @@ public class TrainTopology {
         return getReservedSeats() + nbSeatRequested <= Math.floor(ThresholdManager.getMaxRes() * getMaxSeat());
     }
 
-    public List<Seat> findAvailableSeats(int nbSeatRequested) {
-        List<Seat> availableSeats = new ArrayList<>();
-        int numberOfReserv = 0;
-        // find seats to reserve
-        for (Seat seat : getSeats()) {
-            if (seat.isFree()) {
-                if (numberOfReserv < nbSeatRequested) {
-                    numberOfReserv++;
-                    availableSeats.add(seat);
-                }
-            }
-        }
-        return availableSeats;
+    private List<Seat> findAvailableSeats(int nbSeatRequested) {
+        return seats.stream().filter(Seat::isFree).limit(nbSeatRequested).collect(Collectors.toList());
     }
 
     public BookingAttempt builBookingAttempt(int nbSeatRequested) {

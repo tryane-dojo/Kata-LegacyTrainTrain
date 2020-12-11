@@ -30,13 +30,12 @@ public class WebTicketManager {
     }
 
     public Reservation reserve(String trainId, int nbSeatRequested) throws IOException, InterruptedException {
-        List<Seat> availableSeats = new ArrayList<Seat>();
-        String bookingRef;
 
         // get the train
         TrainTopology train = dataTrainService.getTrainTopology(trainId);
         if ((train.getReservedSeats() + nbSeatRequested) <= Math.floor(ThresholdManager.getMaxRes() * train.getMaxSeat())) {
             int numberOfReserv = 0;
+            List<Seat> availableSeats = new ArrayList<Seat>();
             // find seats to reserve
             for (Seat seat : train.getSeats()) {
                 if (seat.getBookingRef() == "") {
@@ -47,28 +46,22 @@ public class WebTicketManager {
                 }
             }
             
-            if (numberOfReserv != nbSeatRequested) {
-                return new Reservation(trainId);
-            } else {
-                bookingRef = bookingReferenceService.getBookingReference();
+            if (numberOfReserv == nbSeatRequested) {
+                String bookingRef = bookingReferenceService.getBookingReference();
                 for (Seat availableSeat : availableSeats) {
                     availableSeat.setBookingRef(bookingRef);
                 }
-            }
-
-            if (numberOfReserv == nbSeatRequested) {
-
                 this.trainCaching.Save(toSeatsEntities(trainId, availableSeats, bookingRef));
-
+                
                 if (numberOfReserv == 0) {
                     String output = String.format("Reserved seat(s): ", numberOfReserv);
                     System.out.println(output);
                 }
                 dataTrainService.applyReservation(trainId, availableSeats, bookingRef);
                 return new Reservation(trainId, bookingRef, availableSeats);
-                
+            } else {
+                return new Reservation(trainId);
             }
-
         }
         return new Reservation(trainId);
     }

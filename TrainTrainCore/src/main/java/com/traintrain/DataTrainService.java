@@ -64,8 +64,8 @@ public class DataTrainService implements IDataTrainService {
         finally {
             client.close();
         }
-        String trainTopology = JsonTrainTopology;
-        return new TrainTopology(trainTopology);
+        String trainTopologyJson = JsonTrainTopology;
+        return new TrainTopology(trainTopologyJson);
     }
 
 	

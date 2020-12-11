@@ -9,12 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 public class TrainTopology {
-    public int reservedSeats;
-    public List<Seat> seats;
+    private int reservedSeats;
+    private List<Seat> seats;
 
+    public TrainTopology(List<Seat> seats) {
+        this.seats = seats;
+    }
+    
     public TrainTopology(String trainTopol) throws IOException {
-
-        seats = new ArrayList<Seat>();
 
         //var sample:
         //"{\"seats\": {\"1A\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"}}}";
@@ -32,6 +34,14 @@ public class TrainTopology {
                 }
             }
         }
+    }
+
+    public int getReservedSeats() {
+        return (int) seats.stream().filter(seat -> seat.getBookingRef().isEmpty() == false).count();
+    }
+
+    public List<Seat> getSeats() {
+        return seats;
     }
 
     public int getMaxSeat() {

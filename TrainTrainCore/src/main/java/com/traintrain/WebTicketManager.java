@@ -35,10 +35,10 @@ public class WebTicketManager {
 
         // get the train
         TrainTopology train = dataTrainService.getTrainTopology(trainId);
-        if ((train.reservedSeats + nbSeatRequested) <= Math.floor(ThresholdManager.getMaxRes() * train.getMaxSeat())) {
+        if ((train.getReservedSeats() + nbSeatRequested) <= Math.floor(ThresholdManager.getMaxRes() * train.getMaxSeat())) {
             int numberOfReserv = 0;
             // find seats to reserve
-            for (Seat seat : train.seats) {
+            for (Seat seat : train.getSeats()) {
                 if (seat.getBookingRef() == "") {
                     if (numberOfReserv < nbSeatRequested) {
                         numberOfReserv++;

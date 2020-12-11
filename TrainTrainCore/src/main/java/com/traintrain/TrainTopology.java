@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public class TrainTopology {
-    private int reservedSeats;
     private List<Seat> seats;
 
     public TrainTopology(List<Seat> seats) {
@@ -30,9 +29,6 @@ public class TrainTopology {
             for (SeatJson seatJson : value.values()) {
                 int seat_number = Integer.parseInt(seatJson.seat_number);
                 seats.add(new Seat(seatJson.coach, seat_number, seatJson.booking_reference));
-                if (!(new Seat(seatJson.coach, seat_number, seatJson.booking_reference).getBookingRef() == "")) {
-                    this.reservedSeats++;
-                }
             }
         }
     }
@@ -49,7 +45,8 @@ public class TrainTopology {
         return this.seats.size();
     }
 
-    public boolean hasLessThanThreshold(int i) {
-        return reservedSeats < i;
-    }
+	protected boolean isReservedSeatsUnderThreshold(int nbSeatRequested) {
+		return (getReservedSeats() + nbSeatRequested) <= Math.floor(ThresholdManager.getMaxRes() * getMaxSeat());
+	}
+
 }

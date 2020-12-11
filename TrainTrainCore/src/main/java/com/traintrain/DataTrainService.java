@@ -1,5 +1,6 @@
 package com.traintrain;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.ws.rs.client.Client;
@@ -48,6 +49,24 @@ public class DataTrainService implements IDataTrainService {
 		}
 		return postReservation;
 	}
+
+    @Override
+    public TrainTopology getTrainTopology(String trainId) throws IOException {
+        String JsonTrainTopology;
+        Client client = ClientBuilder.newClient();
+        try {
+        
+            WebTarget target = client.target(WebTicketManager.urITrainDataService + "/data_for_train/");
+            WebTarget path = target.path(String.valueOf(trainId));
+            Invocation.Builder request = path.request(MediaType.APPLICATION_JSON);
+            JsonTrainTopology = request.get(String.class);
+        }
+        finally {
+            client.close();
+        }
+        String trainTopology = JsonTrainTopology;
+        return new TrainTopology(trainTopology);
+    }
 
 	
 	

@@ -4,12 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-
 import com.cache.ITrainCaching;
 import com.cache.SeatEntity;
 import com.cache.TrainCaching;
@@ -40,7 +34,7 @@ public class WebTicketManager {
         String bookingRef;
 
         // get the train
-        TrainTopology train = getTrainTopology(trainId);
+        TrainTopology train = dataTrainService.getTrainTopology(trainId);
         if ((train.reservedSeats + nbSeatRequested) <= Math.floor(ThresholdManager.getMaxRes() * train.getMaxSeat())) {
             int numberOfReserv = 0;
             // find seats to reserve
@@ -78,23 +72,6 @@ public class WebTicketManager {
         return new Reservation(trainId);
     }
 
-	protected TrainTopology getTrainTopology(String trainId) throws IOException {
-        
-        String JsonTrainTopology;
-        Client client = ClientBuilder.newClient();
-        try {
-        
-            WebTarget target = client.target(urITrainDataService + "/data_for_train/");
-            WebTarget path = target.path(String.valueOf(trainId));
-            Invocation.Builder request = path.request(MediaType.APPLICATION_JSON);
-            JsonTrainTopology = request.get(String.class);
-        }
-        finally {
-            client.close();
-        }
-        String trainTopology = JsonTrainTopology;
-        return new TrainTopology(trainTopology);
-    }
     
     private List<SeatEntity> toSeatsEntities(String train, List<Seat> availableSeats, String bookingRef) throws InterruptedException {
         List<SeatEntity> seatEntities = new ArrayList<SeatEntity>();

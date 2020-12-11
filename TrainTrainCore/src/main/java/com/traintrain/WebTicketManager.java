@@ -21,7 +21,7 @@ public class WebTicketManager {
 
         TrainTopology train = trainDataService.getTrainTopology(trainId);
         if (train.canBookWithoutExceedCapacity(nbSeatRequested)) {
-            BookingAttempt bookingAttempt = train.builBookingAttempt(nbSeatRequested);
+            BookingAttempt bookingAttempt = train.buildBookingAttempt(nbSeatRequested);
             if (bookingAttempt.isFullfiled()) {
                 String bookingRef = bookingReferenceService.getBookingReference();
                 bookingAttempt.assignReference(bookingRef);

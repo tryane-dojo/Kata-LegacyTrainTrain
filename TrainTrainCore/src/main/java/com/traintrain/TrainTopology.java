@@ -56,7 +56,7 @@ public class TrainTopology {
         return getReservedSeats() + nbSeatRequested <= Math.floor(ThresholdManager.getMaxRes() * getSeats().size());
     }
 
-    public BookingAttempt builBookingAttempt(int nbSeatRequested) {
+    public BookingAttempt buildBookingAttempt(int nbSeatRequested) {
 
         for (Coach coach : coaches) {
             BookingAttempt bookingAttempt = coach.buildBookingAttempt(nbSeatRequested);

@@ -45,7 +45,7 @@ public class TrainTopologyShould {
                     .build();
 
             // when
-            BookingAttempt attempt = train.builBookingAttempt(2);
+            BookingAttempt attempt = train.buildBookingAttempt(2);
 
             //then        
             assertThat(attempt.getSeats()).hasSize(2).containsExactly(new Seat("A", 1), new Seat("A", 2));
@@ -64,7 +64,7 @@ public class TrainTopologyShould {
                     .build();
 
             // when
-            BookingAttempt attempt = train.builBookingAttempt(2);
+            BookingAttempt attempt = train.buildBookingAttempt(2);
 
             //then        
             assertThat(attempt.getSeats()).hasSize(2).containsExactly(new Seat("A", 2), new Seat("A", 3));
@@ -83,7 +83,7 @@ public class TrainTopologyShould {
                     .build();
 
             // when
-            BookingAttempt attempt = train.builBookingAttempt(2);
+            BookingAttempt attempt = train.buildBookingAttempt(2);
 
             //then        
             assertThat(attempt.getSeats()).hasSize(2).containsExactly(new Seat("B", 1), new Seat("B", 2));

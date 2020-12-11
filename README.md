@@ -48,16 +48,33 @@ A few months ago, a v1 of the TrainTrain.Api has been developed and released by 
 ## Kata Workflow
 
 1. Quick look to understand the code architecture and find the domain code
-2. Use basic refactor pattern and our IDE to clarify a little the code base and start to isolate dependencies 
-3. Write your first test on the shortest path
-4. See if you can start to extract some dependencies
-5. Continue to write test to deeper path until you can test the 2 business rules
+2. Write your first test for the happy pass
+3. Isolate and extract dependencies
+4. Try to isolate responsabilities
+5. Continue to write test to test existing business rules
 6. Find why we paying recurrent penalties
 7. Once all domain code is tested and refactored, start to emerge the hexagonal architecture
 8. Implements the new business rule
 ## Platform architecture
 
 ### TrainTrain & Hassan Cehef Web Apis interactions
+
+1. The client request a reservation to TrainTrain
+	{"train_id": "express_2000", "number_of_seats": 2}
+2. The system get the train topology from Hassan Cehef
+	GET http://localhost:8081/data_for_train/express_2000
+    {"seats": {"1A": {"booking_reference": "", "seat_number": "1", "coach": "A"}, "2A": {"booking_reference": "", "seat_number": "2", "coach": "A"}}}
+3. If the train has enough available seats
+   1. Request a booking reference
+   		GET http://localhost:8082/booking_reference
+		75bcd15
+   2. Confirm the reservation to Hassn Cehef
+		POST http://localhost:8081/reserve
+		train_id: express_2000, seats: ["1A", "2A"], booking_reference: 75bcd15 
+   3. And return the reservation to the client
+		{"train_id": "express_2000", "booking_reference": "75bcd15", "seats": ["1A", "1B"]}
+4. Else return empty reservation
+
 
 ![behind](BehindTheCurtain.png)
 

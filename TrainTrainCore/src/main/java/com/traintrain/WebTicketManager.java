@@ -23,8 +23,8 @@ public class WebTicketManager {
         if (train.canBookWithoutExceedCapacity(nbSeatRequested)) {
             BookingAttempt bookingAttempt = train.buildBookingAttempt(nbSeatRequested);
             if (bookingAttempt.isFullfiled()) {
-                String bookingRef = bookingReferenceService.getBookingReference();
-                bookingAttempt.assignReference(bookingRef);
+                String bookingReference = bookingReferenceService.getBookingReference();
+                bookingAttempt.assignReference(bookingReference);
 
                 trainDataService.bookSeats(bookingAttempt);
                 return bookingAttempt.confirm();

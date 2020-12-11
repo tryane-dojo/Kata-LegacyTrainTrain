@@ -5,7 +5,7 @@ import java.io.IOException;
 public class WebTicketManager {
 
     private IBookingReferenceService bookingReferenceService;
-    private ITrainDataService        trainDataService    = new TrainDataService();
+    private ITrainDataService        trainDataService;
 
     public WebTicketManager(IBookingReferenceService bookingReferenceService, ITrainDataService trainDataService) throws InterruptedException {
         this.bookingReferenceService = bookingReferenceService;
@@ -14,6 +14,7 @@ public class WebTicketManager {
 
     public WebTicketManager() {
         bookingReferenceService = new BookingReferenceService();
+        trainDataService = new TrainDataService();
     }
 
     public Reservation reserve(String trainId, int nbSeatRequested) throws IOException {

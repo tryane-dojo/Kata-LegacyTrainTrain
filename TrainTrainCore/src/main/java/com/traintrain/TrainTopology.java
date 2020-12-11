@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,11 +13,14 @@ public class TrainTopology {
     private List<Seat>  seats;
     private List<Coach> coaches;
 
-    public TrainTopology(List<Seat> seats) {
-        this.seats = seats;
-        coaches = new ArrayList<>();
+    public TrainTopology(List<Seat> allSeats) {
+        seats = allSeats;
 
-        coaches.add(new Coach(seats));
+        coaches = new ArrayList<>();
+        allSeats.stream().collect(Collectors.groupingBy(Seat::getCoachName)).values().forEach(seats -> {
+            coaches.add(new Coach(seats));
+        });
+
     }
 
     public static TrainTopology fromJson(String trainTopologyJson) throws IOException {

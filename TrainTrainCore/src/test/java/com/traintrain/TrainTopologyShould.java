@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -70,7 +69,6 @@ public class TrainTopologyShould {
         }
 
         @Test
-        @Disabled
         void obtains_booking_with_all_seats_in_the_same_coach() {
             // given
             TrainTopology train = TrainTopologyBuilder.aTrain()

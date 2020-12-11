@@ -57,7 +57,7 @@ public class TrainTopology {
         return (getReservedSeats() + nbSeatRequested) <= Math.floor(ThresholdManager.getMaxRes() * getMaxSeat());
     }
 
-    List<Seat> findAvailableSeats(int nbSeatRequested) {
+    public List<Seat> findAvailableSeats(int nbSeatRequested) {
         List<Seat> availableSeats = new ArrayList<Seat>();
         int numberOfReserv = 0;
         // find seats to reserve
@@ -70,5 +70,10 @@ public class TrainTopology {
             }
         }
         return availableSeats;
+    }
+
+    public BookingAttempt builBookingAttempt(int nbSeatRequested) {
+        List<Seat> availableSeats = findAvailableSeats(nbSeatRequested);
+        return new BookingAttempt(availableSeats);
     }
 }

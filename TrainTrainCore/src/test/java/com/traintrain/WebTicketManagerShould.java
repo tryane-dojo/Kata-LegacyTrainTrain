@@ -6,15 +6,24 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
+@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class WebTicketManagerShould {
 
     private static final String TRAIN_ID = "express_2000";
+    
     WebTicketManager            webTicketManager;
+    
+    @Mock
+    IBookingReferenceService bookingReferenceService;
 
     @BeforeEach
     public void beforeEach() throws InterruptedException {
-        webTicketManager = new WebTicketManager() {
+        webTicketManager = new WebTicketManager(bookingReferenceService) {
 
             @Override
             protected TrainTopology getTrainTopology(String trainId) throws IOException {
@@ -23,6 +32,7 @@ public class WebTicketManagerShould {
             }
             
         };
+        
     }
 
     @Test

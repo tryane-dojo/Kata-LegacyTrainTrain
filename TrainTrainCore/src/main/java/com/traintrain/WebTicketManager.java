@@ -19,13 +19,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class WebTicketManager {
-    private static final String uriBookingReferenceService = "http://localhost:8082";
+    
     private static final String urITrainDataService = "http://localhost:8081";
     private ITrainCaching trainCaching;
+    private IBookingReferenceService bookingReferenceService;
+    
 
+    public WebTicketManager(IBookingReferenceService bookingReferenceService) throws InterruptedException {
+        this.bookingReferenceService = bookingReferenceService;
+        trainCaching = new TrainCaching();
+        trainCaching.Clear();
+    }
+    
     public WebTicketManager() throws InterruptedException {
         trainCaching = new TrainCaching();
         trainCaching.Clear();
+        bookingReferenceService = new BookingReferenceService();
     }
 
     public Reservation reserve(String trainId, int nbSeatRequested) throws IOException, InterruptedException {
@@ -49,7 +58,7 @@ public class WebTicketManager {
             if (numberOfReserv != nbSeatRequested) {
                 return new Reservation(trainId);
             } else {
-                bookingRef = getBookingReference();
+                bookingRef = bookingReferenceService.getBookingReference();
                 for (Seat availableSeat : availableSeats) {
                     availableSeat.setBookingRef(bookingRef);
                 }
@@ -70,19 +79,6 @@ public class WebTicketManager {
         }
         return new Reservation(trainId);
     }
-
-	protected String getBookingReference() {
-		String bookingRef;
-		Client client = ClientBuilder.newClient();
-		try {			
-			WebTarget target = client.target(uriBookingReferenceService + "/booking_reference/");
-			bookingRef = target.request(MediaType.APPLICATION_JSON).get(String.class);
-		}
-		finally {
-		    client.close();
-		}
-		return bookingRef;
-	}
 
 	protected Reservation applyReservation(String trainId, List<Seat> availableSeats, String bookingRef)
 			throws JsonProcessingException {

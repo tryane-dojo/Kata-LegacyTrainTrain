@@ -13,11 +13,11 @@ public class WebTicketManager {
         this.trainDataService = trainDataService;
     }
 
-    public WebTicketManager() throws InterruptedException {
+    public WebTicketManager() {
         bookingReferenceService = new BookingReferenceService();
     }
 
-    public Reservation reserve(String trainId, int nbSeatRequested) throws IOException, InterruptedException {
+    public Reservation reserve(String trainId, int nbSeatRequested) throws IOException {
 
         // get the train
         TrainTopology train = trainDataService.getTrainTopology(trainId);

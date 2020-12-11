@@ -1,8 +1,15 @@
 package com.traintrain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+
+
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,10 +27,13 @@ public class WebTicketManagerShould {
     
     @Mock
     IBookingReferenceService bookingReferenceService;
+    
+    @Mock
+    IDataTrainService dataTrainService;
 
     @BeforeEach
     public void beforeEach() throws InterruptedException {
-        webTicketManager = new WebTicketManager(bookingReferenceService) {
+        webTicketManager = new WebTicketManager(bookingReferenceService, dataTrainService) {
 
             @Override
             protected TrainTopology getTrainTopology(String trainId) throws IOException {
@@ -40,13 +50,20 @@ public class WebTicketManagerShould {
 
         //given
         int nbSeatRequested = 1;
+        String bookingRef ="2dadaz4";
+        List<Seat> availableSeats = new ArrayList<>();
+        Seat seat = new Seat("A", 1);
+		availableSeats.add(seat);
+		Reservation reservationParameter = new Reservation(TRAIN_ID, bookingRef, availableSeats);
+		when(bookingReferenceService.getBookingReference()).thenReturn(bookingRef);
+		when(dataTrainService.applyReservation(eq(TRAIN_ID), any(), any())).thenReturn(reservationParameter);
 
         // when
         Reservation reservation = webTicketManager.reserve(TRAIN_ID, nbSeatRequested);
 
         //then
         assertThat(reservation.getTrain_id()).isEqualTo(TRAIN_ID);
-        assertThat(reservation.getBooking_reference()).isNotEmpty();
+        assertThat(reservation.getBooking_reference()).isEqualTo(bookingRef);
         assertThat(reservation.getSeats()).containsExactly("1A");
 
     }

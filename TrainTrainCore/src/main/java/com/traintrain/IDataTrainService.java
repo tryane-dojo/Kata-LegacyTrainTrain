@@ -7,7 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface IDataTrainService {
 
-	Reservation applyReservation(String trainId, List<Seat> availableSeats, String bookingRef)
+	void applyReservation(String trainId, List<Seat> availableSeats, String bookingRef)
 			throws JsonProcessingException ;
 
     TrainTopology getTrainTopology(String trainId) throws IOException;

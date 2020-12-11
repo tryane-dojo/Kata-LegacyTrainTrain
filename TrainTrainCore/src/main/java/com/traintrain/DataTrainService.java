@@ -17,10 +17,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DataTrainService implements IDataTrainService {
 
 	@Override
-	public Reservation applyReservation(String trainId, List<Seat> availableSeats, String bookingRef)
+	public void applyReservation(String trainId, List<Seat> availableSeats, String bookingRef)
 			throws JsonProcessingException {
 	
-		Reservation postReservation = new Reservation(trainId, bookingRef, availableSeats);
+		
 		
 		Client client = ClientBuilder.newClient();
 		try {
@@ -28,26 +28,23 @@ public class DataTrainService implements IDataTrainService {
 		    Invocation.Builder request = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
 		    
 		    Form form = new Form();
-		    form.param("train_id", postReservation.getTrain_id());
+		    form.param("train_id", trainId);
 		    
 		    StringBuilder builder = new StringBuilder();
 		    builder.append("[");
-		    for (String seat : postReservation.getSeats()) {
-		        builder.append("\"").append(seat).append("\"");
+		    for (Seat seat : availableSeats) {
+		        builder.append("\"").append(seat.toString()).append("\"");
 		    }
 		    builder.append("]");
 		    
 		    form.param("seats", builder.toString());
-		    form.param("booking_reference", postReservation.getBooking_reference());
+		    form.param("booking_reference", bookingRef);
 		                        
-		    String string = new ObjectMapper().writeValueAsString(postReservation);
-		    System.out.println(string);
 		    request.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 		}
 		finally {
 		    client.close();
 		}
-		return postReservation;
 	}
 
     @Override

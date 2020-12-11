@@ -64,8 +64,9 @@ public class WebTicketManager {
                     String output = String.format("Reserved seat(s): ", numberOfReserv);
                     System.out.println(output);
                 }
-
-                return dataTrainService.applyReservation(trainId, availableSeats, bookingRef);
+                dataTrainService.applyReservation(trainId, availableSeats, bookingRef);
+                return new Reservation(trainId, bookingRef, availableSeats);
+                
             }
 
         }

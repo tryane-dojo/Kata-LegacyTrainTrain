@@ -18,6 +18,7 @@ public class TrainTopology {
     
     public TrainTopology(String trainTopol) throws IOException {
 
+    	seats = new ArrayList<>();
         //var sample:
         //"{\"seats\": {\"1A\": {\"booking_reference\": \"\", \"seat_number\": \"1\", \"coach\": \"A\"}, \"2A\": {\"booking_reference\": \"\", \"seat_number\": \"2\", \"coach\": \"A\"}}}";
         final ObjectMapper objectMapper = new ObjectMapper();

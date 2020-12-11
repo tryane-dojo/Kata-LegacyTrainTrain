@@ -9,10 +9,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TrainTopology {
-    private List<Seat> seats;
+    private List<Seat>  seats;
+    private List<Coach> coaches;
 
     public TrainTopology(List<Seat> seats) {
         this.seats = seats;
+        coaches = new ArrayList<>();
+
+        coaches.add(new Coach(seats));
     }
 
     public static TrainTopology fromJson(String trainTopologyJson) throws IOException {
@@ -52,12 +56,15 @@ public class TrainTopology {
         return getReservedSeats() + nbSeatRequested <= Math.floor(ThresholdManager.getMaxRes() * getMaxSeat());
     }
 
-    private List<Seat> findAvailableSeats(int nbSeatRequested) {
-        return seats.stream().filter(Seat::isFree).limit(nbSeatRequested).collect(Collectors.toList());
-    }
-
     public BookingAttempt builBookingAttempt(int nbSeatRequested) {
-        List<Seat> availableSeats = findAvailableSeats(nbSeatRequested);
-        return new BookingAttempt(nbSeatRequested, availableSeats);
+
+        for (Coach coach : coaches) {
+            BookingAttempt bookingAttempt = coach.buildBookingAttempt(nbSeatRequested);
+            if (bookingAttempt.isFullfiled()) {
+                return bookingAttempt;
+            }
+        }
+
+        return new BookingAttempt(nbSeatRequested, List.of());
     }
 }
